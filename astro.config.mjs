@@ -5,7 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://flowmastersuite.com',
+  site: 'https://flowmaster.live',
   vite: {
     plugins: [tailwindcss()]
   }
