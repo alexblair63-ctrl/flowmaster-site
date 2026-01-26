@@ -1,0 +1,79 @@
+---
+import Button from './Button.astro';
+---
+
+<section id="future-preview" class="section-padding bg-bg-secondary">
+  <div class="container-main">
+    <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">
+      The <span class="text-brand-red">Future</span> of Flowmaster
+    </h2>
+    <p class="text-text-secondary text-center max-w-2xl mx-auto mb-12">
+      We're just getting started. Here's what's coming next.
+    </p>
+
+    <div class="grid lg:grid-cols-2 gap-12 items-center">
+      <!-- UI Preview Image -->
+      <div class="bg-bg-primary rounded-xl border border-gray-800 p-6 flex items-center justify-center">
+        <div class="text-center">
+          <img
+            src="/future-ui-preview.jpg"
+            alt="Preview of future Flowmaster interface with timeline editor"
+            class="rounded-lg border border-gray-700 shadow-lg max-w-[250px] mx-auto mb-3"
+          />
+          <p class="text-text-secondary text-sm">Future UI Preview</p>
+        </div>
+      </div>
+
+      <!-- Roadmap Items -->
+      <div class="space-y-6">
+        <div class="flex items-start gap-4">
+          <div class="w-6 h-6 rounded-full bg-brand-red/20 flex items-center justify-center flex-shrink-0 mt-1">
+            <svg class="w-4 h-4 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-semibold mb-1">Cloud Sync & Backup</h3>
+            <p class="text-text-secondary text-sm">
+              Sync your settings and project files across devices. Never lose your work.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-4">
+          <div class="w-6 h-6 rounded-full bg-brand-red/20 flex items-center justify-center flex-shrink-0 mt-1">
+            <svg class="w-4 h-4 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-semibold mb-1">Integrated UI with Video Preview</h3>
+            <p class="text-text-secondary text-sm">
+              A unified interface with timeline editing and real-time video preview—all in one window.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-4">
+          <div class="w-6 h-6 rounded-full bg-brand-red/20 flex items-center justify-center flex-shrink-0 mt-1">
+            <svg class="w-4 h-4 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-semibold mb-1">Collaborative Editing</h3>
+            <p class="text-text-secondary text-sm">
+              Share projects and work together with your team through the app.
+            </p>
+          </div>
+        </div>
+
+        <div class="pt-4">
+          <Button href="/future" variant="secondary">
+            See our roadmap →
+          </Button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

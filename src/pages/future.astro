@@ -1,0 +1,744 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Button from '../components/Button.astro';
+import landscapeMock from '../assets/app/MobileAppMockLandscape_Large.png';
+import portraitMock from '../assets/app/MobileAppMockVertical.png';
+
+const phases = [
+  {
+    number: 1,
+    title: "Unified Interface",
+    status: "In Development",
+    statusClass: "bg-brand-red/20 text-brand-red",
+    accentClass: "text-brand-red",
+    borderClass: "border-brand-red/30 hover:border-brand-red/50",
+    features: [
+      { title: "Single-window experience", description: "All tools in one place" },
+      { title: "Multi-track recording", description: "V1-V3 video, A1-A3 audio tracks" },
+      { title: "Live preview window", description: "See your sources in real-time" },
+      { title: "Waveform visualization", description: "Spot silence before you cut" },
+      { title: "Session templates", description: "Quick presets for different content types" },
+      { title: "Built-in effects", description: "Audio and video processing without plugins" },
+    ]
+  },
+  {
+    number: 2,
+    title: "Go Live",
+    status: "Planned",
+    statusClass: "bg-[#f5d440]/20 text-[#f5d440]",
+    accentClass: "text-[#f5d440]",
+    borderClass: "border-[#f5d440]/30 hover:border-[#f5d440]/50",
+    features: [
+      { title: "Direct streaming", description: "Broadcast to Twitch, YouTube, and more" },
+      { title: "Multistream support", description: "Go live on 3 platforms simultaneously" },
+      { title: "Integrated chat", description: "All your chats in one panel" },
+      { title: "Stream + Record mode", description: "High-quality local file while you broadcast" },
+      { title: "Recording profiles", description: "Optimized settings per use case" },
+    ]
+  },
+  {
+    number: 3,
+    title: "Mobile & Cloud",
+    status: "Planned",
+    statusClass: "bg-[#6be553]/20 text-[#6be553]",
+    accentClass: "text-[#6be553]",
+    borderClass: "border-[#6be553]/30 hover:border-[#6be553]/50",
+    features: [
+      { title: "Mobile companion app", description: "Mark moments from your phone" },
+      { title: "Cloud settings sync", description: "Your presets on any machine" },
+      { title: "Disk space alerts", description: "Get notified before you run out of storage" },
+      { title: "Remote session monitoring", description: "Check on recordings from anywhere" },
+      { title: "Timestamp backup", description: "Never lose your markers" },
+    ]
+  },
+  {
+    number: 4,
+    title: "Podcasting & Beyond",
+    status: "Future",
+    statusClass: "bg-alenzie-mint/20 text-alenzie-mint",
+    accentClass: "text-alenzie-mint",
+    borderClass: "border-alenzie-mint/30 hover:border-alenzie-mint/50",
+    features: [
+      { title: "Podcasting mode", description: "Audio-focused interface, video preview removed" },
+      { title: "Remote guest recording", description: "Better than Riverside, completely free" },
+      { title: "Browser-based guest joining", description: "Guests need no app, just a link" },
+      { title: "Multi-participant waveforms", description: "See every voice in real-time" },
+      { title: "Podcast chapter export", description: "Ready for Spotify, Apple Podcasts, YouTube" },
+      { title: "Direct NLE export", description: "Send timelines to Premiere, DaVinci, Final Cut" },
+    ]
+  },
+];
+
+const comparisons = [
+  {
+    icon: "🎬",
+    versus: "vs. OBS",
+    title: "More than recording",
+    description: "OBS captures footage. Flowmaster captures footage AND helps you edit it. Mark moments live, cut automatically, clean up files — all in one workflow."
+  },
+  {
+    icon: "🎯",
+    versus: "vs. AI Editors",
+    title: "You stay in control",
+    description: "AI editors guess what's important. Sometimes they're wrong. Flowmaster executes YOUR decisions with precision. No black box. No surprises."
+  },
+  {
+    icon: "🎙️",
+    versus: "vs. Riverside",
+    title: "Podcasting, free forever",
+    description: "Remote guest recording with local quality — and it won't cost you $24/month. Podcasting mode is free. Always."
+  },
+];
+
+const appBenefits = [
+  {
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/><rect x="3" y="19" width="18" height="2" rx="1"/></svg>`,
+    title: 'Mark Without Interrupting',
+    description: 'Tap to mark highlight moments without taking your hands off the controller. Your phone becomes a dedicated F9 button.',
+  },
+  {
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+    title: 'Real-Time Session View',
+    description: 'See your recording timeline, elapsed time, and recent markers update live as you play.',
+  },
+  {
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="9" y1="9" x2="9" y2="15"/><line x1="15" y1="9" x2="15" y2="15"/></svg>`,
+    title: 'Stay In Control',
+    description: 'Monitor connection status, storage space, and session state at a glance. No surprises when you\'re done recording.',
+  },
+  {
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M12 18h.01"/><path d="M8 22h8"/><path d="M2 8h2M20 8h2M2 16h2M20 16h2"/></svg>`,
+    title: 'Works Your Way',
+    description: 'Landscape for full timeline access, portrait for quick one-handed marking. Adapts to how you play.',
+  },
+];
+---
+
+<BaseLayout title="Future">
+  <!-- Hero -->
+  <section class="section-padding pt-32">
+    <div class="container-main text-center">
+      <h1 class="mb-4">
+        The <span class="text-brand-red">Future</span> of Flowmaster
+      </h1>
+      <p class="text-xl text-text-secondary max-w-2xl mx-auto">
+        We're building the ultimate content creation studio. Here's what's coming.
+      </p>
+    </div>
+  </section>
+
+  <!-- Philosophy Statement -->
+  <section class="section-padding pt-0">
+    <div class="container-main">
+      <div class="max-w-3xl mx-auto bg-bg-secondary rounded-xl border border-brand-red/30 p-8 text-center">
+        <p class="text-lg text-gray-300 italic mb-4">
+          "Most editing tools are moving toward AI that decides what's important in your content. We're going the opposite direction.
+        </p>
+        <p class="text-lg text-gray-300 italic mb-6">
+          Flowmaster gives you precision tools that execute YOUR creative decisions. You mark the moments. We handle the tedious cuts."
+        </p>
+        <p class="text-xl font-semibold text-white">
+          We don't guess. You decide.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mobile App Hero -->
+  <section class="app-hero-section">
+    <div class="app-hero-content">
+      <!-- Portrait mockup (back layer) -->
+      <div class="mockup-wrapper mockup-portrait">
+        <img src={portraitMock.src} alt="Flowmaster mobile app portrait view" />
+      </div>
+
+      <!-- Landscape mockup (front layer) -->
+      <div class="mockup-wrapper mockup-landscape">
+        <img src={landscapeMock.src} alt="Flowmaster mobile app landscape view" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Mobile App Benefits -->
+  <section class="app-benefits-section section-padding">
+    <div class="container-main">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl font-semibold mb-4">Your Session, In Your Pocket</h2>
+        <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+          The Flowmaster companion app puts control where you need it.
+        </p>
+      </div>
+
+      <div class="app-benefits-grid">
+        {appBenefits.map((benefit, index) => (
+          <div class="app-benefit-card" style={`--delay: ${index * 100}ms`}>
+            <div class="app-benefit-icon" set:html={benefit.icon} />
+            <h3 class="text-xl font-semibold mt-4 mb-2">{benefit.title}</h3>
+            <p class="text-gray-400 leading-relaxed">{benefit.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Under Development -->
+  <section class="under-dev-section section-padding">
+    <div class="container-main text-center">
+      <div class="construction-wrapper">
+        <svg viewBox="0 0 280 200" xmlns="http://www.w3.org/2000/svg" class="construction-graphic">
+          <!-- Shadow (bottom layer) -->
+          <ellipse cx="140" cy="188" rx="90" ry="10" fill="rgba(0,0,0,0.4)" class="shadow"/>
+
+          <!-- Barrier (back) -->
+          <g class="barrier">
+            <!-- Left leg -->
+            <rect x="45" y="85" width="10" height="75" rx="2" fill="#444"/>
+            <!-- Right leg -->
+            <rect x="225" y="85" width="10" height="75" rx="2" fill="#444"/>
+
+            <!-- Top rail with stripes -->
+            <g class="barrier-rail-group top-rail">
+              <rect x="35" y="65" width="210" height="18" rx="3" fill="#d64545"/>
+              <rect class="stripe" x="55" y="65" width="12" height="18" fill="#fff"/>
+              <rect class="stripe" x="95" y="65" width="12" height="18" fill="#fff"/>
+              <rect class="stripe" x="135" y="65" width="12" height="18" fill="#fff"/>
+              <rect class="stripe" x="175" y="65" width="12" height="18" fill="#fff"/>
+              <rect class="stripe" x="215" y="65" width="12" height="18" fill="#fff"/>
+            </g>
+
+            <!-- Bottom rail with stripes -->
+            <g class="barrier-rail-group bottom-rail">
+              <rect x="35" y="95" width="210" height="18" rx="3" fill="#d64545"/>
+              <rect class="stripe" x="75" y="95" width="12" height="18" fill="#fff"/>
+              <rect class="stripe" x="115" y="95" width="12" height="18" fill="#fff"/>
+              <rect class="stripe" x="155" y="95" width="12" height="18" fill="#fff"/>
+              <rect class="stripe" x="195" y="95" width="12" height="18" fill="#fff"/>
+            </g>
+          </g>
+
+          <!-- Cone (front) -->
+          <g class="cone">
+            <!-- Cone base -->
+            <ellipse cx="140" cy="172" rx="40" ry="8" fill="#c43c3c"/>
+            <!-- Cone body -->
+            <path d="M 100 168 L 128 70 L 152 70 L 180 168 Z" fill="#d64545"/>
+            <!-- White stripe band -->
+            <path d="M 108 145 L 118 110 L 162 110 L 172 145 Z" fill="#fff" opacity="0.95"/>
+            <!-- Cone tip cap -->
+            <ellipse cx="140" cy="68" rx="14" ry="5" fill="#c43c3c"/>
+            <!-- Highlight on cone -->
+            <path d="M 120 140 L 126 115 L 134 115 L 128 140 Z" fill="#fff" opacity="0.2"/>
+          </g>
+        </svg>
+      </div>
+
+      <h2 class="text-3xl font-semibold mt-8 tracking-wide">Under Development</h2>
+      <p class="text-gray-500 mt-3 text-lg">The mobile companion app is on our roadmap.</p>
+    </div>
+  </section>
+
+  <!-- Roadmap -->
+  <section class="section-padding">
+    <div class="container-main">
+      <h2 class="text-center mb-4">Roadmap</h2>
+      <p class="text-text-secondary text-center max-w-2xl mx-auto mb-12">
+        Our development journey, organized into phases. No specific dates — just steady progress toward the vision.
+      </p>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {phases.map(phase => (
+          <div class={`card border ${phase.borderClass} transition-colors`}>
+            <div class="flex items-center justify-between mb-6">
+              <div class="flex items-center gap-3">
+                <span class={`text-2xl font-bold ${phase.accentClass}`}>Phase {phase.number}</span>
+                <span class="text-xl font-semibold text-white">{phase.title}</span>
+              </div>
+              <span class={`text-xs px-3 py-1 rounded-full uppercase tracking-wider font-medium ${phase.statusClass}`}>
+                {phase.status}
+              </span>
+            </div>
+
+            <ul class="space-y-3">
+              {phase.features.map(feature => (
+                <li class="flex items-start gap-3">
+                  <svg class={`w-5 h-5 ${phase.accentClass} flex-shrink-0 mt-0.5`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                  <div>
+                    <span class="text-white font-medium">{feature.title}</span>
+                    <span class="text-text-secondary"> — {feature.description}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Comparison -->
+  <section class="section-padding bg-bg-secondary">
+    <div class="container-main">
+      <h2 class="text-center mb-4">Why Flowmaster?</h2>
+      <p class="text-text-secondary text-center max-w-2xl mx-auto mb-12">
+        See how Flowmaster compares to other tools in the space.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {comparisons.map(item => (
+          <div class="card hover:border-brand-red/30 transition-colors text-center">
+            <div class="text-4xl mb-4">{item.icon}</div>
+            <p class="text-text-secondary text-sm uppercase tracking-wider mb-2">{item.versus}</p>
+            <h3 class="text-xl font-semibold mb-3">{item.title}</h3>
+            <p class="text-text-secondary text-sm">{item.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section-padding bg-gradient-to-b from-bg-primary to-bg-secondary">
+    <div class="container-main text-center">
+      <h2 class="mb-4">Want to shape the future?</h2>
+      <p class="text-text-secondary max-w-2xl mx-auto mb-8">
+        Join our Discord to vote on features and get early access to new releases.
+      </p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <Button href="https://discord.gg/S8uJpcK3qJ" variant="primary" size="lg">
+          Join Discord
+        </Button>
+        <Button href="/download" variant="secondary" size="lg">
+          Download v0.8.5
+        </Button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* ===== Mobile App Hero ===== */
+  .app-hero-section {
+    height: 70vh;
+    min-height: 500px;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(180deg, #0a0a0a 0%, #101010 100%);
+  }
+
+  .app-hero-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .mockup-wrapper {
+    position: absolute;
+    opacity: 0;
+    transition: opacity 0.3s ease-out, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .mockup-wrapper.animate-in {
+    opacity: 1;
+  }
+
+  .mockup-wrapper img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .mockup-portrait img {
+    max-width: 260px;
+  }
+
+  .mockup-landscape img {
+    max-width: 480px;
+  }
+
+  /* Portrait mockup (back layer) */
+  .mockup-portrait {
+    left: 22%;
+    top: 50%;
+    transform: translateY(-50%) translateX(-80px) scale(0.85);
+    z-index: 1;
+  }
+
+  .mockup-portrait.animate-in {
+    transform: translateY(-50%) translateX(0) scale(0.85);
+  }
+
+  /* Landscape mockup (front layer) */
+  .mockup-landscape {
+    right: 17%;
+    top: 50%;
+    transform: translateY(-50%) translateX(80px) scale(1);
+    z-index: 2;
+    filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.5));
+  }
+
+  .mockup-landscape.animate-in {
+    transform: translateY(-50%) translateX(0) scale(1);
+  }
+
+  /* ===== Mobile App Benefits ===== */
+  .app-benefits-section {
+    background: #0a0a0a;
+  }
+
+  .app-benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .app-benefit-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 32px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out, border-color 0.3s ease;
+    transition-delay: var(--delay, 0ms);
+  }
+
+  .app-benefit-card.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .app-benefit-card:hover {
+    border-color: rgba(244, 63, 63, 0.3);
+  }
+
+  .app-benefit-icon {
+    width: 48px;
+    height: 48px;
+    color: #f43f43;
+  }
+
+  .app-benefit-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* ===== Under Development ===== */
+  .under-dev-section {
+    background: #0a0a0a;
+    padding-top: 80px;
+    padding-bottom: 120px;
+  }
+
+  .construction-wrapper {
+    display: flex;
+    justify-content: center;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+
+  .construction-wrapper.animate-in {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .construction-graphic {
+    width: 260px;
+    height: auto;
+  }
+
+  /* Cone wobble animation */
+  .cone {
+    transform-origin: 140px 172px;
+    animation: cone-wobble 2.5s ease-in-out infinite;
+  }
+
+  @keyframes cone-wobble {
+    0%, 100% {
+      transform: rotate(-2deg);
+    }
+    50% {
+      transform: rotate(2deg);
+    }
+  }
+
+  /* Subtle barrier stripe shimmer */
+  .barrier-rail-group .stripe {
+    animation: stripe-pulse 3s ease-in-out infinite;
+  }
+
+  .top-rail .stripe:nth-child(2) { animation-delay: 0s; }
+  .top-rail .stripe:nth-child(3) { animation-delay: 0.2s; }
+  .top-rail .stripe:nth-child(4) { animation-delay: 0.4s; }
+  .top-rail .stripe:nth-child(5) { animation-delay: 0.6s; }
+  .top-rail .stripe:nth-child(6) { animation-delay: 0.8s; }
+
+  .bottom-rail .stripe:nth-child(2) { animation-delay: 0.1s; }
+  .bottom-rail .stripe:nth-child(3) { animation-delay: 0.3s; }
+  .bottom-rail .stripe:nth-child(4) { animation-delay: 0.5s; }
+  .bottom-rail .stripe:nth-child(5) { animation-delay: 0.7s; }
+
+  @keyframes stripe-pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+
+  /* Shadow pulse */
+  .shadow {
+    animation: shadow-pulse 2.5s ease-in-out infinite;
+  }
+
+  @keyframes shadow-pulse {
+    0%, 100% {
+      transform: scaleX(1);
+      opacity: 0.4;
+    }
+    50% {
+      transform: scaleX(1.05);
+      opacity: 0.3;
+    }
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 1024px) {
+    .mockup-portrait {
+      left: 15%;
+    }
+
+    .mockup-landscape {
+      right: 10%;
+    }
+
+    .mockup-portrait img {
+      max-width: 220px;
+    }
+
+    .mockup-landscape img {
+      max-width: 400px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .app-hero-section {
+      height: auto;
+      min-height: auto;
+      padding: 60px 20px;
+    }
+
+    .app-hero-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 40px;
+      height: auto;
+    }
+
+    .mockup-wrapper {
+      position: relative;
+      left: auto !important;
+      right: auto !important;
+      top: auto !important;
+      transform: none !important;
+    }
+
+    .mockup-wrapper.animate-in {
+      transform: none !important;
+    }
+
+    .mockup-portrait img {
+      max-width: 180px;
+    }
+
+    .mockup-landscape img {
+      max-width: 300px;
+    }
+
+    .app-benefits-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .app-benefit-card {
+      padding: 24px;
+    }
+
+    .construction-graphic {
+      width: 200px;
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .mockup-wrapper,
+    .app-benefit-card,
+    .construction-wrapper {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+
+    .cone,
+    .barrier-rail-group .stripe,
+    .shadow {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // ===== Hero entrance animations =====
+    const portraitMock = document.querySelector('.mockup-portrait');
+    const landscapeMock = document.querySelector('.mockup-landscape');
+
+    // Use Intersection Observer to trigger entrance when section is visible
+    const heroSection = document.querySelector('.app-hero-section');
+
+    const heroObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            portraitMock?.classList.add('animate-in');
+            setTimeout(() => {
+              landscapeMock?.classList.add('animate-in');
+            }, 200);
+          }, 200);
+          heroObserver.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.3
+    });
+
+    if (heroSection) {
+      heroObserver.observe(heroSection);
+    }
+
+    // ===== Mouse parallax for mockups =====
+    if (window.matchMedia('(hover: hover)').matches && heroSection) {
+      let mouseX = 0;
+      let mouseY = 0;
+      let currentPortraitX = 0;
+      let currentPortraitY = 0;
+      let currentLandscapeX = 0;
+      let currentLandscapeY = 0;
+
+      heroSection.addEventListener('mousemove', (e: MouseEvent) => {
+        const rect = heroSection.getBoundingClientRect();
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        mouseX = (e.clientX - rect.left - centerX) / centerX;
+        mouseY = (e.clientY - rect.top - centerY) / centerY;
+      });
+
+      heroSection.addEventListener('mouseleave', () => {
+        mouseX = 0;
+        mouseY = 0;
+      });
+
+      const animateMouse = () => {
+        // Smooth easing
+        const ease = 0.08;
+
+        // Portrait moves OPPOSITE to mouse (depth effect) - max 25px
+        const targetPortraitX = mouseX * -25;
+        const targetPortraitY = mouseY * -15;
+        currentPortraitX += (targetPortraitX - currentPortraitX) * ease;
+        currentPortraitY += (targetPortraitY - currentPortraitY) * ease;
+
+        // Landscape moves WITH mouse (foreground) - max 20px
+        const targetLandscapeX = mouseX * 20;
+        const targetLandscapeY = mouseY * 12;
+        currentLandscapeX += (targetLandscapeX - currentLandscapeX) * ease;
+        currentLandscapeY += (targetLandscapeY - currentLandscapeY) * ease;
+
+        if (portraitMock && portraitMock.classList.contains('animate-in')) {
+          (portraitMock as HTMLElement).style.transform =
+            `translateY(-50%) translateX(${currentPortraitX}px) translateY(${currentPortraitY}px) scale(0.85)`;
+        }
+
+        if (landscapeMock && landscapeMock.classList.contains('animate-in')) {
+          (landscapeMock as HTMLElement).style.transform =
+            `translateY(-50%) translateX(${currentLandscapeX}px) translateY(${currentLandscapeY}px) scale(1)`;
+        }
+
+        requestAnimationFrame(animateMouse);
+      };
+
+      animateMouse();
+    }
+
+    // ===== Scroll fade for mockups =====
+    const handleScroll = () => {
+      if (!heroSection || !portraitMock || !landscapeMock) return;
+
+      const rect = heroSection.getBoundingClientRect();
+      const heroHeight = heroSection.clientHeight;
+
+      // Only fade when scrolling past the hero section
+      if (rect.top < 0) {
+        const scrolledPast = Math.abs(rect.top);
+        const fadeEnd = heroHeight * 0.5;
+        const opacity = Math.max(0, 1 - scrolledPast / fadeEnd);
+
+        (portraitMock as HTMLElement).style.opacity = String(opacity);
+        (landscapeMock as HTMLElement).style.opacity = String(opacity);
+      }
+    };
+
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+
+    // ===== Benefits scroll animation =====
+    const benefitCards = document.querySelectorAll('.app-benefit-card');
+
+    const benefitsObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-in');
+          benefitsObserver.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.2,
+      rootMargin: '0px 0px -50px 0px'
+    });
+
+    benefitCards.forEach(card => benefitsObserver.observe(card));
+
+    // ===== Construction section animation =====
+    const constructionWrapper = document.querySelector('.construction-wrapper');
+
+    const constructionObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-in');
+          constructionObserver.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.3
+    });
+
+    if (constructionWrapper) {
+      constructionObserver.observe(constructionWrapper);
+    }
+  });
+</script>

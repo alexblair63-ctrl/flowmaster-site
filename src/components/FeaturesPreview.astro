@@ -1,0 +1,58 @@
+---
+import Button from './Button.astro';
+---
+
+<section id="features-preview" class="section-padding">
+  <div class="container-main">
+    <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">
+      Packed with <span class="text-brand-red">Features</span>
+    </h2>
+    <p class="text-text-secondary text-center max-w-2xl mx-auto mb-12">
+      Everything you need to edit smarter, not harder
+    </p>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+      <!-- Feature 1: Global Hotkey -->
+      <div class="bg-bg-secondary rounded-xl p-6 border border-gray-800 hover:border-brand-red/50 transition-colors duration-300">
+        <div class="text-4xl mb-4">⌨️</div>
+        <h3 class="text-lg font-semibold mb-2">Global Hotkey</h3>
+        <p class="text-text-secondary text-sm">
+          Mark highlights instantly with a customizable hotkey—no alt-tabbing required.
+        </p>
+      </div>
+
+      <!-- Feature 2: Smart File Matching -->
+      <div class="bg-bg-secondary rounded-xl p-6 border border-gray-800 hover:border-brand-red/50 transition-colors duration-300">
+        <div class="text-4xl mb-4">📁</div>
+        <h3 class="text-lg font-semibold mb-2">Smart File Matching</h3>
+        <p class="text-text-secondary text-sm">
+          Automatically finds and links your recording files based on timestamps.
+        </p>
+      </div>
+
+      <!-- Feature 3: Auto-Remux -->
+      <div class="bg-bg-secondary rounded-xl p-6 border border-gray-800 hover:border-brand-red/50 transition-colors duration-300">
+        <div class="text-4xl mb-4">⚡</div>
+        <h3 class="text-lg font-semibold mb-2">Auto-Remux</h3>
+        <p class="text-text-secondary text-sm">
+          Converts MKV recordings to editor-friendly MP4 while cutting—no manual remuxing required.
+        </p>
+      </div>
+
+      <!-- Feature 4: Recycle Bin Safe -->
+      <div class="bg-bg-secondary rounded-xl p-6 border border-gray-800 hover:border-brand-red/50 transition-colors duration-300">
+        <div class="text-4xl mb-4">🗑️</div>
+        <h3 class="text-lg font-semibold mb-2">Recycle Bin Safe</h3>
+        <p class="text-text-secondary text-sm">
+          Deleted footage goes to recycle bin first—recover accidentally removed clips easily.
+        </p>
+      </div>
+    </div>
+
+    <div class="text-center">
+      <Button href="/features" variant="secondary">
+        See all features →
+      </Button>
+    </div>
+  </div>
+</section>

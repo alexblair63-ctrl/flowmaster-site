@@ -1,0 +1,121 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const docs = [
+  {
+    title: 'Getting Started',
+    description: 'Quick start guide to get Flowmaster running',
+    href: '/docs',
+    current: true,
+  },
+  {
+    title: 'OBS Setup',
+    description: 'Configure OBS to work with Flowmaster',
+    href: '/docs/obs-setup',
+  },
+  {
+    title: 'Configuration',
+    description: 'Customize Flowmaster settings',
+    href: '#',
+    comingSoon: true,
+  },
+  {
+    title: 'Troubleshooting',
+    description: 'Common issues and solutions',
+    href: '#',
+    comingSoon: true,
+  },
+];
+---
+
+<BaseLayout title="Documentation">
+  <div class="section-padding pt-32">
+    <div class="container-main">
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+
+        <!-- Sidebar -->
+        <aside class="lg:col-span-1">
+          <h3 class="font-semibold mb-4">Documentation</h3>
+          <nav class="space-y-2">
+            {docs.map(doc => (
+              <a
+                href={doc.comingSoon ? '#' : doc.href}
+                class={`block py-2 px-3 rounded-lg transition-colors ${
+                  doc.current
+                    ? 'bg-brand-red/20 text-brand-red'
+                    : doc.comingSoon
+                      ? 'text-gray-600 cursor-not-allowed'
+                      : 'text-text-secondary hover:text-white hover:bg-bg-tertiary'
+                }`}
+              >
+                {doc.title}
+                {doc.comingSoon && <span class="text-xs ml-2">(soon)</span>}
+              </a>
+            ))}
+          </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="lg:col-span-3">
+          <h1 class="mb-4">Getting Started</h1>
+          <p class="text-xl text-text-secondary mb-8">Get Flowmaster running in 5 minutes</p>
+
+          <div class="prose prose-invert max-w-none">
+            <h2 class="text-2xl font-semibold mb-4 mt-8">Quick Start</h2>
+
+            <ol class="space-y-6 text-gray-300">
+              <li class="flex gap-4">
+                <span class="flex-shrink-0 w-8 h-8 rounded-full bg-brand-red/20 text-brand-red flex items-center justify-center font-bold">1</span>
+                <div>
+                  <strong class="text-white">Download and install Flowmaster</strong>
+                  <p class="text-text-secondary mt-1">Get the installer from the <a href="/download" class="text-brand-red hover:underline">download page</a>.</p>
+                </div>
+              </li>
+
+              <li class="flex gap-4">
+                <span class="flex-shrink-0 w-8 h-8 rounded-full bg-brand-red/20 text-brand-red flex items-center justify-center font-bold">2</span>
+                <div>
+                  <strong class="text-white">Set up OBS integration</strong>
+                  <p class="text-text-secondary mt-1">Follow the <a href="/docs/obs-setup" class="text-brand-red hover:underline">OBS setup guide</a> to connect Flowmaster with OBS.</p>
+                </div>
+              </li>
+
+              <li class="flex gap-4">
+                <span class="flex-shrink-0 w-8 h-8 rounded-full bg-brand-red/20 text-brand-red flex items-center justify-center font-bold">3</span>
+                <div>
+                  <strong class="text-white">Configure your output folder</strong>
+                  <p class="text-text-secondary mt-1">Tell Flowmaster where your OBS recordings are saved.</p>
+                </div>
+              </li>
+
+              <li class="flex gap-4">
+                <span class="flex-shrink-0 w-8 h-8 rounded-full bg-brand-red/20 text-brand-red flex items-center justify-center font-bold">4</span>
+                <div>
+                  <strong class="text-white">Start recording and press F9</strong>
+                  <p class="text-text-secondary mt-1">Hit F9 whenever something highlight-worthy happens.</p>
+                </div>
+              </li>
+
+              <li class="flex gap-4">
+                <span class="flex-shrink-0 w-8 h-8 rounded-full bg-brand-red/20 text-brand-red flex items-center justify-center font-bold">5</span>
+                <div>
+                  <strong class="text-white">Run Clip</strong>
+                  <p class="text-text-secondary mt-1">Process your footage with one click.</p>
+                </div>
+              </li>
+
+              <li class="flex gap-4">
+                <span class="flex-shrink-0 w-8 h-8 rounded-full bg-brand-red/20 text-brand-red flex items-center justify-center font-bold">6</span>
+                <div>
+                  <strong class="text-white">Run Clean</strong>
+                  <p class="text-text-secondary mt-1">Free up space by removing processed originals.</p>
+                </div>
+              </li>
+            </ol>
+          </div>
+        </main>
+
+      </div>
+    </div>
+  </div>
+</BaseLayout>

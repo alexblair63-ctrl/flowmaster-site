@@ -1,0 +1,126 @@
+/* Logo Animation CSS
+ * Intro animation for the 5-element logo reveal
+ * Elements: Red square, Yellow square, Green square, Flowmaster text, LIVE STUDIO text
+ */
+
+/* Keyframe for colored squares - 50px rise with fade in */
+@keyframes fadeRiseSquare {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Keyframe for Flowmaster text - 30px rise with scale 0.85 to 1 and fade in */
+@keyframes fadeScaleRise {
+  from {
+    opacity: 0;
+    transform: scale(0.85) translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Keyframe for LIVE STUDIO text - 15px rise with fade in */
+@keyframes fadeRiseSmall {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Performance optimization - hint browser for GPU acceleration */
+.logo-red,
+.logo-yellow,
+.logo-green {
+  will-change: transform, opacity, translate;
+}
+
+.logo-text-flowmaster,
+.logo-text-livestudio {
+  will-change: transform, opacity;
+}
+
+/* Red square animation - starts at 0ms */
+.logo-red {
+  animation: fadeRiseSquare 750ms ease-out 0ms forwards;
+}
+
+/* Yellow square animation - starts at 500ms */
+.logo-yellow {
+  animation: fadeRiseSquare 750ms ease-out 500ms forwards;
+}
+
+/* Green square animation - starts at 1000ms */
+.logo-green {
+  animation: fadeRiseSquare 750ms ease-out 1000ms forwards;
+}
+
+/* Flowmaster text animation - starts at 1200ms */
+.logo-text-flowmaster {
+  animation: fadeScaleRise 750ms ease-out 1200ms forwards;
+}
+
+/* LIVE STUDIO text animation - starts at 1500ms */
+.logo-text-livestudio {
+  animation: fadeRiseSmall 750ms ease-out 1500ms forwards;
+}
+
+/* Breathing animation - activates after intro completes */
+@keyframes breathe {
+  0%, 100% {
+    transform: translate(var(--parallax-x, 0), var(--parallax-y, 0)) translateY(0) scale(1);
+  }
+  50% {
+    transform: translate(var(--parallax-x, 0), var(--parallax-y, 0)) translateY(-8px) scale(1.02);
+  }
+}
+
+/* Ensure squares can scale from center for pulse effect */
+.logo-square {
+  transform-origin: center;
+}
+
+/* Individual square tracking - active after intro completes
+ * Uses 'translate' property (not transform) so it doesn't conflict
+ * with Web Animations API pulse which uses transform: scale() */
+.logo-square.tracking-active {
+  translate: var(--square-x, 0px) var(--square-y, 0px);
+}
+
+.logo-parallax-wrapper.animation-complete {
+  animation: breathe 4s ease-in-out infinite;
+}
+
+/* Reduced motion preference - disable animations and show elements immediately */
+@media (prefers-reduced-motion: reduce) {
+  .logo-red,
+  .logo-yellow,
+  .logo-green,
+  .logo-text-flowmaster,
+  .logo-text-livestudio {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    will-change: auto;
+  }
+
+  .logo-square.tracking-active {
+    translate: none;
+  }
+
+  /* Reduced motion: disable breathing too */
+  .logo-parallax-wrapper.animation-complete {
+    animation: none !important;
+  }
+}

@@ -1,0 +1,679 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<div class={`timeline-range-animation ${className}`}>
+  <svg
+    viewBox="0 0 600 200"
+    class="animation-svg"
+    xmlns="http://www.w3.org/2000/svg"
+    preserveAspectRatio="xMidYMid meet"
+  >
+    <defs>
+      <!-- Edge fade gradient for scrolling content - only fade left edge -->
+      <linearGradient id="scrollFade" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="white" stop-opacity="0" />
+        <stop offset="8%" stop-color="white" stop-opacity="1" />
+        <stop offset="100%" stop-color="white" stop-opacity="1" />
+      </linearGradient>
+      <mask id="scrollMask">
+        <rect x="50" y="0" width="550" height="200" fill="url(#scrollFade)" />
+      </mask>
+      <!-- Fade gradient for fixed timeline bar -->
+      <linearGradient id="barFade" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#252525" stop-opacity="0" />
+        <stop offset="15%" stop-color="#252525" stop-opacity="1" />
+        <stop offset="85%" stop-color="#252525" stop-opacity="1" />
+        <stop offset="100%" stop-color="#252525" stop-opacity="0" />
+      </linearGradient>
+    </defs>
+
+    <!-- Master wrapper for fade + parallax -->
+    <g class="animation-stage">
+
+      <!-- Zoom container -->
+      <g class="zoom-container">
+
+        <!-- FIXED: Timeline bar background (doesn't scroll, only zooms) -->
+        <rect
+          class="timeline-bar"
+          x="50" y="85"
+          width="500" height="30"
+          rx="4"
+          fill="url(#barFade)"
+        />
+
+        <!-- SCROLLING: Ticks and ranges (masked, scrolls left together) -->
+        <g class="scrolling-content" mask="url(#scrollMask)">
+          <!-- Timeline ticks (extended range for scroll + zoom) -->
+          <g class="timeline-ticks">
+            {[...Array(120)].map((_, i) => {
+              const x = (i - 10) * 20;
+              return (
+                <line
+                  x1={x}
+                  y1={i % 5 === 0 ? 80 : 83}
+                  x2={x}
+                  y2={85}
+                  stroke="#484848"
+                  stroke-width={i % 5 === 0 ? 2 : 1}
+                />
+              );
+            })}
+          </g>
+
+          <!-- RANGES: Children of scrolling-content, positioned at spawn tick locations -->
+          <!-- Range 1 - spawns at 21% when scroll is -65px, so x=365 (right edge) -->
+          <g class="range-group range-group-1">
+            <rect
+              class="range range-1"
+              x="315" y="88"
+              width="50" height="24"
+              rx="3"
+              opacity="0"
+            />
+            <path
+              class="range-checkmark range-1-checkmark"
+              d="M 330 96 L 337 103 L 350 92"
+              fill="none"
+              stroke="#1a1a1a"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              opacity="0"
+            />
+          </g>
+
+          <!-- Range 2 - spawns at 36% when scroll is -134px, so x=434 (right edge) -->
+          <g class="range-group range-group-2">
+            <rect
+              class="range range-2"
+              x="384" y="88"
+              width="50" height="24"
+              rx="3"
+              opacity="0"
+            />
+            <path
+              class="range-checkmark range-2-checkmark"
+              d="M 399 96 L 406 103 L 419 92"
+              fill="none"
+              stroke="#1a1a1a"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              opacity="0"
+            />
+          </g>
+
+          <!-- Range 3 - spawns at 57% when scroll is -231px, so x=531 (right edge) -->
+          <g class="range-group range-group-3">
+            <rect
+              class="range range-3"
+              x="481" y="88"
+              width="50" height="24"
+              rx="3"
+              fill="#f5d440"
+              opacity="0"
+            />
+          </g>
+
+          <!-- Range 4 - spawns at 64% when scroll is -263px, so x=563 (right edge) -->
+          <g class="range-group range-group-4">
+            <rect
+              class="range range-4"
+              x="513" y="88"
+              width="50" height="24"
+              rx="3"
+              fill="#f5d440"
+              opacity="0"
+            />
+          </g>
+
+          <!-- Range 5 - spawns at 71% when scroll is -295px, so x=595 (right edge) -->
+          <g class="range-group range-group-5">
+            <rect
+              class="range range-5"
+              x="545" y="88"
+              width="50" height="24"
+              rx="3"
+              fill="#f5d440"
+              opacity="0"
+            />
+          </g>
+
+          <!-- Combined range (green) - appears at 81% at same position as range 3 -->
+          <g class="range-group range-group-combined">
+            <g class="combined-range" opacity="0">
+              <rect
+                x="481" y="88"
+                width="113" height="24"
+                rx="3"
+                fill="#6be553"
+              />
+              <path
+                class="checkmark-trace"
+                d="M 521 96 L 531 106 L 551 90"
+                fill="none"
+                stroke="#1a1a1a"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </g>
+          </g>
+        </g>
+
+        <!-- Playhead (red vertical line) - moves right and fades during rewind -->
+        <g class="playhead">
+          <line
+            x1="300" y1="70"
+            x2="300" y2="125"
+            stroke="#f43f43"
+            stroke-width="2"
+          />
+          <polygon
+            points="300,70 294,60 306,60"
+            fill="#f43f43"
+          />
+        </g>
+
+        <!-- F9 Key Assembly - hovers near playhead, bobs gently -->
+        <g class="f9-key-assembly" transform="translate(460, 25)">
+          <!-- Key base (shadow) -->
+          <rect
+            class="key-base"
+            x="0" y="4"
+            width="70" height="45"
+            rx="8"
+            fill="#252525"
+          />
+
+          <!-- Key body -->
+          <g class="key-body">
+            <rect
+              x="0" y="0"
+              width="70" height="45"
+              rx="8"
+              fill="#252525"
+              stroke="#f5d440"
+              stroke-width="2"
+            />
+
+            <!-- Key surface (3D effect) -->
+            <rect
+              x="6" y="4"
+              width="58" height="35"
+              rx="5"
+              fill="#1a1a1a"
+            />
+
+            <!-- F9 text -->
+            <text
+              x="35" y="28"
+              text-anchor="middle"
+              fill="#f5d440"
+              font-family="var(--font-heading), sans-serif"
+              font-size="18"
+              font-weight="bold"
+            >
+              F9
+            </text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </svg>
+</div>
+
+<style>
+  .timeline-range-animation {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    --parallax-x: 0px;
+    --parallax-y: 0px;
+  }
+
+  .animation-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Master fade animation */
+  .animation-stage {
+    animation: master-fade 14s ease-in-out infinite;
+    transform: translate(var(--parallax-x), var(--parallax-y));
+    transform-origin: center center;
+  }
+
+  @keyframes master-fade {
+    0% { opacity: 0; }
+    7% { opacity: 1; }
+    93% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  /* Playhead animation - continues forward and fades during rewind */
+  .playhead {
+    animation: playhead-move 14s linear infinite;
+  }
+
+  @keyframes playhead-move {
+    0%, 72% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    /* Keep moving right as timeline rewinds, fade out */
+    80% {
+      transform: translateX(150px);
+      opacity: 0;
+    }
+    /* Stay hidden during merge */
+    93% {
+      transform: translateX(150px);
+      opacity: 0;
+    }
+    /* Reset for next loop */
+    100% {
+      transform: translateX(0);
+      opacity: 0;
+    }
+  }
+
+  /* Zoom transitions */
+  .zoom-container {
+    transform-origin: 300px 100px;
+    animation: zoom-sequence 14s ease-in-out infinite;
+  }
+
+  @keyframes zoom-sequence {
+    0%, 7% { transform: scale(1.3); }
+    21% { transform: scale(1.1); }
+    36%, 93% { transform: scale(0.9); }
+    100% { transform: scale(1.3); }
+  }
+
+  /* Scrolling content (ticks + ranges) animation */
+  /* Constant speed scroll left until rewind, then ease back right */
+  .scrolling-content {
+    animation: content-scroll 14s linear infinite;
+  }
+
+  @keyframes content-scroll {
+    /* Hold at start */
+    0%, 7% { transform: translateX(0); }
+    /* Constant speed: 300px over 65% (7% to 72%) = 4.615px per % */
+    /* Linear interpolation points for constant velocity */
+    72% { transform: translateX(-300px); }
+    /* Rewind to show merge */
+    80% { transform: translateX(-150px); }
+    /* Hold for merge animation */
+    93%, 100% { transform: translateX(-150px); }
+  }
+
+  /* F9 Key assembly - gentle bob and fade out on rewind */
+  .f9-key-assembly {
+    animation: f9-bob 2s ease-in-out infinite, f9-fade 14s ease-out infinite;
+  }
+
+  @keyframes f9-bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  @keyframes f9-fade {
+    /* Start invisible */
+    0%, 15% { opacity: 0; }
+    /* Fade in before first press at 21% */
+    19% { opacity: 1; }
+    70% { opacity: 1; }
+    /* Fast fade out during rewind (~400ms = ~3%) */
+    73% { opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  /* F9 Key press animation - medium snappy presses */
+  .key-body {
+    animation: f9-press-sequence 14s infinite;
+    animation-timing-function: cubic-bezier(0.1, 0, 0.3, 1);
+  }
+
+  @keyframes f9-press-sequence {
+    /* Press 1 at 3s (21%) */
+    0%, 20.5% { transform: translateY(0); }
+    21% { transform: translateY(6px); }
+    21.7% { transform: translateY(-1px); }
+    23% { transform: translateY(0); }
+
+    /* Press 2 at 5s (36%) */
+    35.5% { transform: translateY(0); }
+    36% { transform: translateY(6px); }
+    36.7% { transform: translateY(-1px); }
+    38% { transform: translateY(0); }
+
+    /* Press 3 at 8s (57%) */
+    56.5% { transform: translateY(0); }
+    57% { transform: translateY(6px); }
+    57.7% { transform: translateY(-1px); }
+    59% { transform: translateY(0); }
+
+    /* Press 4 at 9s (64%) */
+    63.5% { transform: translateY(0); }
+    64% { transform: translateY(6px); }
+    64.7% { transform: translateY(-1px); }
+    66% { transform: translateY(0); }
+
+    /* Press 5 at 10s (71%) */
+    70.5% { transform: translateY(0); }
+    71% { transform: translateY(6px); }
+    71.7% { transform: translateY(-1px); }
+    73%, 100% { transform: translateY(0); }
+  }
+
+  /* Range spawn animations */
+  .range {
+    transform-origin: center top;
+  }
+
+  /* Range 1 - spawns at 21%, pops in white+scaled, settles to yellow */
+  /* transform-origin: right center keeps right edge flush with playhead */
+  .range-1 {
+    animation: range-1-spawn 14s ease-out infinite;
+    transform-origin: right center;
+  }
+
+  @keyframes range-1-spawn {
+    0%, 20% { opacity: 0; transform: translateY(-20px) scale(1.15); fill: #ffffff; }
+    /* Pop in - white and scaled up */
+    21% { opacity: 1; transform: translateY(-20px) scale(1.15); fill: #ffffff; }
+    /* Halfway through settle - transition to yellow and normal size */
+    24% { transform: translateY(-8px) scale(1.05); fill: #f5d440; }
+    /* Settle with small bounce */
+    27% { transform: translateY(2px) scale(1); fill: #f5d440; }
+    30% { transform: translateY(0) scale(1); fill: #f5d440; }
+    /* Stay yellow until combined range appears */
+    83% { opacity: 1; fill: #f5d440; }
+    /* Turn green after combined range is visible */
+    85% { fill: #6be553; }
+    96% { opacity: 1; fill: #6be553; }
+    100% { opacity: 0; }
+  }
+
+  /* Range 1 checkmark - appears when green */
+  .range-1-checkmark {
+    animation: range-1-check 14s ease-out infinite;
+  }
+
+  @keyframes range-1-check {
+    0%, 84% { opacity: 0; }
+    86% { opacity: 1; }
+    96% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  /* Range 2 - spawns at 36%, pops in white+scaled, settles to yellow */
+  .range-2 {
+    animation: range-2-spawn 14s ease-out infinite;
+    transform-origin: right center;
+  }
+
+  @keyframes range-2-spawn {
+    0%, 35% { opacity: 0; transform: translateY(-20px) scale(1.15); fill: #ffffff; }
+    /* Pop in - white and scaled up */
+    36% { opacity: 1; transform: translateY(-20px) scale(1.15); fill: #ffffff; }
+    /* Halfway through settle - transition to yellow and normal size */
+    39% { transform: translateY(-8px) scale(1.05); fill: #f5d440; }
+    /* Settle with small bounce */
+    42% { transform: translateY(2px) scale(1); fill: #f5d440; }
+    45% { transform: translateY(0) scale(1); fill: #f5d440; }
+    /* Stay yellow until combined range appears */
+    83% { opacity: 1; fill: #f5d440; }
+    /* Turn green after combined range is visible */
+    85% { fill: #6be553; }
+    96% { opacity: 1; fill: #6be553; }
+    100% { opacity: 0; }
+  }
+
+  /* Range 2 checkmark - appears when green */
+  .range-2-checkmark {
+    animation: range-2-check 14s ease-out infinite;
+  }
+
+  @keyframes range-2-check {
+    0%, 84% { opacity: 0; }
+    86% { opacity: 1; }
+    96% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  /* Range groups now inherit scroll from parent scrolling-content */
+  /* Only need finale animations for lift-up and zip-off */
+
+  /* Range 1: lift and zip off first */
+  .range-group-1 {
+    animation: group-1-finale 14s linear infinite;
+  }
+
+  @keyframes group-1-finale {
+    0%, 86% { transform: translateY(0); }
+    89% { transform: translateY(-60px); }
+    92% { transform: translateY(-60px); }
+    95% { transform: translateX(-500px) translateY(-60px); }
+    100% { transform: translateX(-500px) translateY(-60px); }
+  }
+
+  /* Range 2: lift and zip off second */
+  .range-group-2 {
+    animation: group-2-finale 14s linear infinite;
+  }
+
+  @keyframes group-2-finale {
+    0%, 86% { transform: translateY(0); }
+    89% { transform: translateY(-60px); }
+    93% { transform: translateY(-60px); }
+    96% { transform: translateX(-500px) translateY(-60px); }
+    100% { transform: translateX(-500px) translateY(-60px); }
+  }
+
+  /* Range 3 - spawns at 57%, pops in white+scaled, settles to yellow */
+  .range-3 {
+    animation: range-3-spawn 14s ease-out infinite;
+    transform-origin: right center;
+  }
+
+  @keyframes range-3-spawn {
+    0%, 56% { opacity: 0; transform: translateY(-20px) scale(1.15); fill: #ffffff; }
+    /* Pop in - white and scaled up */
+    57% { opacity: 1; transform: translateY(-20px) scale(1.15); fill: #ffffff; }
+    /* Halfway through settle - transition to yellow and normal size */
+    60% { transform: translateY(-8px) scale(1.05); fill: #f5d440; }
+    /* Settle with small bounce */
+    63% { transform: translateY(2px) scale(1); fill: #f5d440; }
+    66% { transform: translateY(0) scale(1); fill: #f5d440; }
+    78% { opacity: 1; transform: translateY(0) scale(1); }
+    /* Fold down and fade as combined appears */
+    81% { opacity: 0.5; transform: translateY(0) scale(1); }
+    83% { opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  /* Range 4 - spawns at 64%, pops in white+scaled, settles stacked */
+  .range-4 {
+    animation: range-4-spawn 14s ease-out infinite;
+    transform-origin: right center;
+  }
+
+  @keyframes range-4-spawn {
+    0%, 63% { opacity: 0; transform: translateY(-40px) scale(1.15); fill: #ffffff; }
+    /* Pop in - white and scaled up */
+    64% { opacity: 1; transform: translateY(-40px) scale(1.15); fill: #ffffff; }
+    /* Halfway through settle - transition to yellow and normal size */
+    67% { transform: translateY(-28px) scale(1.05); fill: #f5d440; }
+    /* Settle to stacked position */
+    70% { transform: translateY(-18px) scale(1); fill: #f5d440; }
+    73% { transform: translateY(-20px) scale(1); fill: #f5d440; }
+    /* Hold stacked position */
+    78% { opacity: 1; transform: translateY(-20px) scale(1); }
+    /* Fold down to merge */
+    81% { transform: translateY(0) scale(1); opacity: 0.5; }
+    83% { opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  /* Range 5 - spawns at 71%, pops in white+scaled, settles stacked */
+  .range-5 {
+    animation: range-5-spawn 14s ease-out infinite;
+    transform-origin: right center;
+  }
+
+  @keyframes range-5-spawn {
+    0%, 70% { opacity: 0; transform: translateY(-60px) scale(1.15); fill: #ffffff; }
+    /* Pop in - white and scaled up */
+    71% { opacity: 1; transform: translateY(-60px) scale(1.15); fill: #ffffff; }
+    /* Halfway through settle - transition to yellow and normal size */
+    74% { transform: translateY(-48px) scale(1.05); fill: #f5d440; }
+    /* Settle to stacked position */
+    77% { transform: translateY(-38px) scale(1); fill: #f5d440; }
+    78% { opacity: 1; transform: translateY(-40px) scale(1); fill: #f5d440; }
+    /* Fold down to merge */
+    81% { transform: translateY(0) scale(1); opacity: 0.5; }
+    83% { opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  /* Ranges 3, 4, 5: inherit scroll from parent, no separate animation needed */
+  /* These fold into combined range, so no finale zip-off */
+  .range-group-3,
+  .range-group-4,
+  .range-group-5 {
+    /* No animation - just inherit parent scroll */
+  }
+
+  /* Combined range merge animation - simple fade in */
+  .combined-range {
+    animation: combined-merge 14s ease-out infinite;
+  }
+
+  @keyframes combined-merge {
+    0%, 81% { opacity: 0; }
+    84% { opacity: 1; }
+    96% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  /* Checkmark trace animation */
+  .checkmark-trace {
+    stroke-dasharray: 40;
+    stroke-dashoffset: 40;
+    animation: checkmark-draw 14s ease-out infinite;
+  }
+
+  @keyframes checkmark-draw {
+    0%, 82% { stroke-dashoffset: 40; }
+    86% { stroke-dashoffset: 0; }
+    96% { stroke-dashoffset: 0; }
+    100% { stroke-dashoffset: 40; }
+  }
+
+  /* Combined range group: appears at 81%, lifts and zips off third */
+  .range-group-combined {
+    animation: group-combined-finale 14s linear infinite;
+  }
+
+  @keyframes group-combined-finale {
+    0%, 86% { transform: translateY(0); }
+    89% { transform: translateY(-60px); }
+    94% { transform: translateY(-60px); }
+    97% { transform: translateX(-500px) translateY(-60px); }
+    100% { transform: translateX(-500px) translateY(-60px); }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .timeline-range-animation * {
+      animation: none !important;
+    }
+
+    /* Show static "result" frame */
+    .animation-stage {
+      opacity: 1;
+    }
+
+    .zoom-container {
+      transform: scale(0.9);
+    }
+
+    .scrolling-content {
+      transform: translateX(-200px);
+    }
+
+    .range {
+      opacity: 0 !important;
+    }
+
+    .combined-range {
+      opacity: 1 !important;
+      transform: scaleX(1) !important;
+    }
+
+    .checkmark-trace {
+      stroke-dashoffset: 0 !important;
+    }
+  }
+</style>
+
+<script>
+  // Parallax effect for desktop
+  function initParallax() {
+    const animation = document.querySelector('.timeline-range-animation');
+    if (!animation) return;
+
+    // Only enable parallax on desktop
+    if (window.matchMedia('(min-width: 768px)').matches) {
+      document.addEventListener('mousemove', (e) => {
+        const x = (e.clientX / window.innerWidth - 0.5) * 2;
+        const y = (e.clientY / window.innerHeight - 0.5) * 2;
+        const moveX = x * 0.03 * 100; // 3% depth
+        const moveY = y * 0.03 * 100;
+        (animation as HTMLElement).style.setProperty('--parallax-x', `${moveX}px`);
+        (animation as HTMLElement).style.setProperty('--parallax-y', `${moveY}px`);
+      });
+    }
+  }
+
+  // Scroll-triggered play/pause for mobile
+  function initScrollTrigger() {
+    const animation = document.querySelector('.timeline-range-animation');
+    if (!animation) return;
+
+    const svg = animation.querySelector('.animation-svg');
+    if (!svg) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const allAnimated = animation.querySelectorAll('[class*="animation"], .range, .key-body, .checkmark-trace, .combined-range, .zoom-container, .scrolling-content');
+        allAnimated.forEach(el => {
+          (el as HTMLElement).style.animationPlayState = entry.isIntersecting ? 'running' : 'paused';
+        });
+      });
+    }, { threshold: 0.3 });
+
+    observer.observe(animation);
+  }
+
+  // Initialize on DOM ready
+  document.addEventListener('DOMContentLoaded', () => {
+    initParallax();
+    initScrollTrigger();
+  });
+
+  // Also init immediately in case DOM is already loaded
+  if (document.readyState !== 'loading') {
+    initParallax();
+    initScrollTrigger();
+  }
+</script>

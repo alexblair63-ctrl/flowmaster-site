@@ -1,0 +1,9 @@
+# Ignore everything
+*
+
+# Track website source files
+!.gitignore
+!src/
+!src/**
+!public/
+!public/**

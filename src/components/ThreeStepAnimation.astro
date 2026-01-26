@@ -1,0 +1,179 @@
+---
+import RecordAnimation from './animations/RecordAnimation.astro';
+import AutoCutAnimation from './animations/AutoCutAnimation.astro';
+import AutoCleanAnimation from './animations/AutoCleanAnimation.astro';
+
+const steps = [
+  {
+    number: '1',
+    title: 'Mark',
+    description: 'Hit a hotkey during epic moments. Flowmaster marks these highlights while you keep playing.',
+    color: 'step-record',
+  },
+  {
+    number: '2',
+    title: 'Clip',
+    description: 'Run Clip to trim footage based on your marked timestamps. Keep the highlights, cut the rest.',
+    color: 'step-autocut',
+  },
+  {
+    number: '3',
+    title: 'Clean Up',
+    description: 'Detect and remove original files after highlights are extracted, freeing up storage.',
+    color: 'step-autoclean',
+  },
+];
+---
+
+<section id="how-it-works" class="section-padding overflow-hidden">
+  <div class="container-main">
+
+    <!-- Section title -->
+    <h2 class="text-center text-3xl md:text-4xl font-heading font-bold mb-16">
+      Easy as
+      <span class="text-step-record">1</span>,
+      <span class="text-step-autocut">2</span>,
+      <span class="text-step-autoclean">3</span>
+    </h2>
+
+    <!-- Three columns -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+      {steps.map((step, index) => (
+        <div
+          class="step-card text-center"
+          data-step={index}
+          style={`--animation-delay: ${index * 0.3}s;`}
+        >
+          <!-- Step number -->
+          <div class={`text-6xl md:text-7xl font-heading font-bold mb-4 text-${step.color}`}>
+            {step.number}
+          </div>
+
+          <!-- SVG Animation Container -->
+          <div
+            class="step-animation relative w-48 h-48 mx-auto mb-6 parallax-element"
+            data-depth="0.03"
+          >
+            {index === 0 && <RecordAnimation class="w-full h-full" />}
+            {index === 1 && <AutoCutAnimation class="w-full h-full" />}
+            {index === 2 && <AutoCleanAnimation class="w-full h-full" />}
+          </div>
+
+          <!-- Title -->
+          <h3 class={`text-2xl font-heading font-bold mb-3 text-${step.color}`}>
+            {step.title}
+          </h3>
+
+          <!-- Description -->
+          <p class="text-gray-400 max-w-xs mx-auto">
+            {step.description}
+          </p>
+        </div>
+      ))}
+    </div>
+
+  </div>
+</section>
+
+<style>
+  /* Entrance animation */
+  .step-card {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    transition-delay: var(--animation-delay);
+  }
+
+  .step-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Idle float animation */
+  .step-animation {
+    animation: float 3s ease-in-out infinite;
+    transform: translate(var(--parallax-x, 0), var(--parallax-y, 0));
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translate(var(--parallax-x, 0), calc(var(--parallax-y, 0) + 0px)); }
+    50% { transform: translate(var(--parallax-x, 0), calc(var(--parallax-y, 0) - 8px)); }
+  }
+
+  /* Hover state - faster float */
+  .step-card:hover .step-animation {
+    animation: float 1.5s ease-in-out infinite;
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .step-card {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+
+    .step-animation {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  // Entrance animation on scroll
+  const stepCards = document.querySelectorAll('.step-card');
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    },
+    { threshold: 0.2 }
+  );
+
+  stepCards.forEach(card => observer.observe(card));
+
+  // Parallax effect (desktop only)
+  if (window.matchMedia('(min-width: 768px)').matches) {
+    const parallaxElements = document.querySelectorAll('.parallax-element');
+
+    document.addEventListener('mousemove', (e) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 2;
+      const y = (e.clientY / window.innerHeight - 0.5) * 2;
+
+      parallaxElements.forEach(el => {
+        const depth = parseFloat((el as HTMLElement).dataset.depth || '0.03');
+        const moveX = x * depth * 100;
+        const moveY = y * depth * 100;
+
+        (el as HTMLElement).style.setProperty('--parallax-x', `${moveX}px`);
+        (el as HTMLElement).style.setProperty('--parallax-y', `${moveY}px`);
+      });
+    });
+  }
+
+  // Mobile: auto-play animation when in view
+  if (window.matchMedia('(max-width: 767px)').matches) {
+    const mobileObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate-active');
+            // Remove after a few loops
+            setTimeout(() => {
+              entry.target.classList.remove('animate-active');
+            }, 6000);
+          }
+        });
+      },
+      { threshold: 0.5 }
+    );
+
+    document.querySelectorAll('.step-animation').forEach(el => {
+      mobileObserver.observe(el);
+    });
+  }
+</script>

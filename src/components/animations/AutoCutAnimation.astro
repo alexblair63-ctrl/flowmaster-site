@@ -1,0 +1,233 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<svg
+  viewBox="0 0 200 200"
+  class={`autocut-svg ${className}`}
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <!-- Film strip -->
+  <g class="film-strip">
+    <!-- Main strip -->
+    <rect x="10" y="85" width="180" height="30" fill="#252525" rx="2"/>
+
+    <!-- Sprocket holes top -->
+    <rect x="18" y="87" width="6" height="5" fill="#101010" rx="1"/>
+    <rect x="36" y="87" width="6" height="5" fill="#101010" rx="1"/>
+    <rect x="54" y="87" width="6" height="5" fill="#101010" rx="1"/>
+    <rect x="72" y="87" width="6" height="5" fill="#101010" rx="1"/>
+    <rect x="122" y="87" width="6" height="5" fill="#101010" rx="1"/>
+    <rect x="140" y="87" width="6" height="5" fill="#101010" rx="1"/>
+    <rect x="158" y="87" width="6" height="5" fill="#101010" rx="1"/>
+    <rect x="176" y="87" width="6" height="5" fill="#101010" rx="1"/>
+
+    <!-- Sprocket holes bottom -->
+    <rect x="18" y="108" width="6" height="5" fill="#101010" rx="1"/>
+    <rect x="36" y="108" width="6" height="5" fill="#101010" rx="1"/>
+    <rect x="54" y="108" width="6" height="5" fill="#101010" rx="1"/>
+    <rect x="72" y="108" width="6" height="5" fill="#101010" rx="1"/>
+    <rect x="122" y="108" width="6" height="5" fill="#101010" rx="1"/>
+    <rect x="140" y="108" width="6" height="5" fill="#101010" rx="1"/>
+    <rect x="158" y="108" width="6" height="5" fill="#101010" rx="1"/>
+    <rect x="176" y="108" width="6" height="5" fill="#101010" rx="1"/>
+
+    <!-- Film frames -->
+    <rect x="16" y="93" width="24" height="14" fill="#1a1a1a" rx="1"/>
+    <rect x="46" y="93" width="24" height="14" fill="#1a1a1a" rx="1"/>
+    <rect x="130" y="93" width="24" height="14" fill="#1a1a1a" rx="1"/>
+    <rect x="160" y="93" width="24" height="14" fill="#1a1a1a" rx="1"/>
+  </g>
+
+  <!-- Cut line (dashed) -->
+  <line
+    class="cut-line"
+    x1="100" y1="80"
+    x2="100" y2="120"
+    stroke="#f5d440"
+    stroke-width="2"
+    stroke-dasharray="6 3"
+    opacity="0.5"
+  />
+
+  <!-- Extracted clip that pops out -->
+  <g class="extracted-clip" opacity="0.78">
+    <!-- Glow effect -->
+    <rect
+      x="152" y="48"
+      width="40" height="28"
+      rx="3"
+      fill="#f5d440"
+      opacity="0.3"
+      class="clip-glow"
+    />
+    <!-- Clip body -->
+    <rect
+      x="155" y="51"
+      width="34" height="22"
+      rx="2"
+      fill="#f5d440"
+      class="clip-body"
+    />
+    <!-- Sprocket holes on clip (muted/darkened yellow) -->
+    <rect x="158" y="47" width="5" height="4" fill="#c4aa33" rx="1"/>
+    <rect x="175" y="47" width="5" height="4" fill="#c4aa33" rx="1"/>
+    <rect x="158" y="73" width="5" height="4" fill="#c4aa33" rx="1"/>
+    <rect x="175" y="73" width="5" height="4" fill="#c4aa33" rx="1"/>
+  </g>
+
+  <!-- Scissors with separate blades for snipping animation -->
+  <g class="scissors-container">
+    <g transform="translate(100, 100) scale(3.5)">
+      <!-- Top blade (rotates around center 12,12) -->
+      <g class="blade-top">
+        <circle cx="6" cy="6" r="3" fill="none" stroke="#f5d440" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M8.12 8.12 12 12" fill="none" stroke="#f5d440" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="12" y1="12" x2="20" y2="6" stroke="#f5d440" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+
+      <!-- Bottom blade (rotates around center 12,12) -->
+      <g class="blade-bottom">
+        <circle cx="6" cy="18" r="3" fill="none" stroke="#f5d440" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M8.12 15.88 12 12" fill="none" stroke="#f5d440" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="12" y1="12" x2="20" y2="18" stroke="#f5d440" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+    </g>
+  </g>
+</svg>
+
+<style>
+  .autocut-svg .scissors-container {
+    animation: scissors-swing 2s ease-in-out infinite;
+    transform-origin: 100px 100px;
+    animation-play-state: paused;
+  }
+
+  .autocut-svg .blade-top {
+    transform-origin: 12px 12px;
+    animation: blade-top-snip 0.5s ease-in-out infinite;
+    animation-play-state: paused;
+  }
+
+  .autocut-svg .blade-bottom {
+    transform-origin: 12px 12px;
+    animation: blade-bottom-snip 0.5s ease-in-out infinite;
+    animation-play-state: paused;
+  }
+
+  .autocut-svg .cut-line {
+    animation: cut-flash 2s ease-in-out infinite;
+    animation-play-state: paused;
+  }
+
+  .autocut-svg .extracted-clip {
+    opacity: 0;
+    animation: clip-pop 2s ease-out infinite;
+    animation-play-state: paused;
+  }
+
+  .autocut-svg .clip-glow {
+    animation: glow-pulse 2s ease-out infinite;
+    animation-play-state: paused;
+  }
+
+  :global(.animate-active) .autocut-svg .scissors-container,
+  :global(.animate-active) .autocut-svg .blade-top,
+  :global(.animate-active) .autocut-svg .blade-bottom,
+  :global(.animate-active) .autocut-svg .cut-line,
+  :global(.animate-active) .autocut-svg .extracted-clip,
+  :global(.animate-active) .autocut-svg .clip-glow,
+  :global(.step-card:hover) .autocut-svg .scissors-container,
+  :global(.step-card:hover) .autocut-svg .blade-top,
+  :global(.step-card:hover) .autocut-svg .blade-bottom,
+  :global(.step-card:hover) .autocut-svg .cut-line,
+  :global(.step-card:hover) .autocut-svg .extracted-clip,
+  :global(.step-card:hover) .autocut-svg .clip-glow {
+    animation-play-state: running;
+  }
+
+  @keyframes scissors-swing {
+    0%, 100% {
+      transform: translateX(-6px) rotate(-3deg);
+    }
+    50% {
+      transform: translateX(6px) rotate(3deg);
+    }
+  }
+
+  @keyframes blade-top-snip {
+    0%, 100% {
+      transform: rotate(8deg);
+    }
+    50% {
+      transform: rotate(-4deg);
+    }
+  }
+
+  @keyframes blade-bottom-snip {
+    0%, 100% {
+      transform: rotate(-8deg);
+    }
+    50% {
+      transform: rotate(4deg);
+    }
+  }
+
+  @keyframes cut-flash {
+    0%, 20% {
+      opacity: 0.3;
+    }
+    25% {
+      opacity: 1;
+    }
+    35%, 100% {
+      opacity: 0.3;
+    }
+  }
+
+  @keyframes clip-pop {
+    0%, 25% {
+      opacity: 0;
+      transform: translate(0, 30px) scale(0.5);
+    }
+    35% {
+      opacity: 0.78;
+      transform: translate(0, -5px) scale(1.1);
+    }
+    45% {
+      transform: translate(0, 2px) scale(0.95);
+    }
+    55% {
+      transform: translate(0, -2px) scale(1.02);
+    }
+    65% {
+      opacity: 0.78;
+      transform: translate(0, 0) scale(1);
+    }
+    85%, 100% {
+      opacity: 0;
+      transform: translate(10px, -10px) scale(0.8);
+    }
+  }
+
+  @keyframes glow-pulse {
+    0%, 25% {
+      opacity: 0;
+    }
+    35% {
+      opacity: 0.6;
+    }
+    55% {
+      opacity: 0.4;
+    }
+    65% {
+      opacity: 0.5;
+    }
+    85%, 100% {
+      opacity: 0;
+    }
+  }
+</style>

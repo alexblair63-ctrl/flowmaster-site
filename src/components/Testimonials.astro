@@ -1,0 +1,120 @@
+---
+// Testimonials - Video placeholder + 5-card carousel
+const testimonials = [
+  {
+    quote: "Flowmaster cut my editing time in half. I used to spend 4 hours on a video, now it's under 2.",
+    name: "Alex Chen",
+    role: "Twitch Partner",
+    initial: "A"
+  },
+  {
+    quote: "The dead air detection is insane. It finds all the boring parts I would have missed.",
+    name: "Sarah Miller",
+    role: "YouTube Creator",
+    initial: "S"
+  },
+  {
+    quote: "Finally, software made by gamers who actually understand the workflow.",
+    name: "Marcus Johnson",
+    role: "Esports Coach",
+    initial: "M"
+  },
+  {
+    quote: "I was skeptical at first, but the hotkey marking system is a game changer.",
+    name: "Emma Wilson",
+    role: "Variety Streamer",
+    initial: "E"
+  },
+  {
+    quote: "Best investment I've made for my content. Pays for itself in time saved.",
+    name: "David Park",
+    role: "Gaming YouTuber",
+    initial: "D"
+  }
+];
+---
+
+<section id="testimonials" class="section-padding">
+  <div class="container-main">
+    <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">
+      Loved by <span class="text-brand-red">Creators</span>
+    </h2>
+    <p class="text-text-secondary text-center max-w-2xl mx-auto mb-12">
+      Join thousands of content creators who've transformed their workflow
+    </p>
+
+    <div class="grid lg:grid-cols-2 gap-12 items-center mb-12">
+      <!-- Video Placeholder -->
+      <div class="bg-bg-secondary rounded-xl border border-gray-800 aspect-video flex items-center justify-center relative cursor-pointer group">
+        <div class="absolute inset-0 bg-brand-red/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl"></div>
+        <div class="text-center relative z-10">
+          <div class="w-16 h-16 rounded-full bg-brand-red flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+            <svg class="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </div>
+          <p class="text-text-secondary">Watch Creator Stories</p>
+        </div>
+      </div>
+
+      <!-- Testimonial Carousel -->
+      <div class="relative">
+        <div class="overflow-hidden">
+          <div id="testimonial-track" class="flex transition-transform duration-300 ease-out">
+            {testimonials.map((t) => (
+              <div class="w-full flex-shrink-0 px-2">
+                <div class="bg-bg-secondary rounded-xl p-6 border border-gray-800">
+                  <p class="text-text-secondary mb-6 italic">"{t.quote}"</p>
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-brand-red/20 flex items-center justify-center text-brand-red font-semibold">
+                      {t.initial}
+                    </div>
+                    <div>
+                      <div class="font-semibold">{t.name}</div>
+                      <div class="text-text-secondary text-sm">{t.role}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- Navigation Dots -->
+        <div class="flex justify-center gap-2 mt-6">
+          {testimonials.map((_, i) => (
+            <button
+              class="testimonial-dot w-2 h-2 rounded-full bg-gray-600 hover:bg-brand-red transition-colors"
+              data-index={i}
+              aria-label={`Go to testimonial ${i + 1}`}
+            ></button>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const track = document.getElementById('testimonial-track');
+  const dots = document.querySelectorAll('.testimonial-dot');
+  let currentIndex = 0;
+
+  function goToSlide(index: number) {
+    currentIndex = index;
+    if (track) {
+      track.style.transform = `translateX(-${index * 100}%)`;
+    }
+    dots.forEach((dot, i) => {
+      dot.classList.toggle('bg-brand-red', i === index);
+      dot.classList.toggle('bg-gray-600', i !== index);
+    });
+  }
+
+  dots.forEach((dot, i) => {
+    dot.addEventListener('click', () => goToSlide(i));
+  });
+
+  // Initialize first dot as active
+  goToSlide(0);
+</script>
