@@ -1,0 +1,109 @@
+# Task 07: Features Page
+
+## Goal
+Create a detailed features page with all Flowmaster capabilities.
+
+---
+
+## 7.1 Features Page
+
+**src/pages/features.astro:**
+```astro
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Button from '../components/Button.astro';
+
+const features = [
+  {
+    title: 'Global Hotkey System',
+    description: 'F9 works even when games have focus. Timestamps saved automatically. Works with any recording software (designed for OBS).',
+    icon: '⌨️',
+  },
+  {
+    title: 'Smart File Matching',
+    description: 'Auto-matches timestamp files to video files. Handles webcam footage separately. Tolerant timing (±2-5 second matching window).',
+    icon: '🔗',
+  },
+  {
+    title: 'Intelligent Range Calculation',
+    description: 'Configurable lookback window (capture moments before you hit the key). Automatic overlap merging (no duplicate frames). Preview ranges before processing.',
+    icon: '📐',
+  },
+  {
+    title: 'Lightning Fast Processing',
+    description: 'Stream copy mode (no re-encoding). Preserves full quality. Process hours of footage in minutes.',
+    icon: '⚡',
+  },
+  {
+    title: 'Safe Cleanup',
+    description: 'AutoCleaner finds processed videos. Shows exactly how much space you\'ll save. Sends to Recycle Bin (always recoverable).',
+    icon: '🛡️',
+  },
+  {
+    title: 'OBS Integration',
+    description: 'Works with Advanced Scene Switcher plugin. Auto-start/stop with recording. No manual launching required.',
+    icon: '🎬',
+  },
+];
+---
+
+<BaseLayout title="Features">
+  <!-- Hero -->
+  <section class="section-padding pt-32">
+    <div class="container-main text-center">
+      <h1 class="mb-4">Features</h1>
+      <p class="text-xl text-gray-400 max-w-2xl mx-auto">
+        Everything you need to eliminate pre-editing
+      </p>
+    </div>
+  </section>
+  
+  <!-- Features Grid -->
+  <section class="section-padding pt-8">
+    <div class="container-main">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {features.map(feature => (
+          <div class="card hover:border-brand-red/30 transition-colors">
+            <div class="text-4xl mb-4">{feature.icon}</div>
+            <h3 class="text-xl font-semibold mb-3">{feature.title}</h3>
+            <p class="text-gray-400">{feature.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+  
+  <!-- CTA -->
+  <section class="section-padding text-center">
+    <div class="container-main">
+      <h2 class="mb-4">Ready to try it?</h2>
+      <p class="text-gray-400 mb-8">Join the beta and start editing smarter today.</p>
+      <Button href="/download" size="lg">Download Beta</Button>
+    </div>
+  </section>
+</BaseLayout>
+```
+
+---
+
+## Acceptance Criteria
+
+- [ ] Page has hero with title and description
+- [ ] Nav is visible on this page (no hero to hide it)
+- [ ] 6 feature cards display in 2-column grid
+- [ ] Each card has icon, title, and description
+- [ ] Cards have hover effect
+- [ ] CTA section at bottom with download link
+- [ ] Page is accessible at /features
+
+---
+
+## Testing
+
+```bash
+npm run dev
+# Navigate to http://localhost:4321/features
+# Verify nav is visible
+# Verify all 6 features display
+# Hover over cards - should see border highlight
+```

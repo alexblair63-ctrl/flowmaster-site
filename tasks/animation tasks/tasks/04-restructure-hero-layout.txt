@@ -1,0 +1,101 @@
+# Task 04: Restructure Hero to Two-Column Layout
+
+## Objective
+
+Convert the hero section from a centered single-column layout to a two-column layout on desktop, with text content on the left and the animated logo on the right.
+
+## Context
+
+Current state (before):
+- Single column, centered
+- "FLOWMASTER LIVE STUDIO" tagline
+- "Edit as you record" headline
+- Description paragraph
+- CTA buttons
+
+Target state (after):
+- Two-column grid on desktop
+- Left column: headline, description, buttons (left-aligned)
+- Right column: AnimatedLogo component
+- Remove the "FLOWMASTER LIVE STUDIO" tagline text (the animated logo now serves this purpose)
+
+Reference: `LogoAssets/Other/intended-desktop-look-look.jpg`
+
+## Steps
+
+1. Locate the hero section in the codebase (from Task 01 audit)
+2. Remove or comment out the "FLOWMASTER LIVE STUDIO" tagline
+3. Wrap hero content in a CSS Grid or Flexbox two-column container
+4. Import and place the AnimatedLogo component in the right column
+5. Adjust text alignment (left-align the text column content)
+6. Ensure proper vertical alignment between columns
+7. Add appropriate gap/spacing between columns
+8. Maintain existing styling for buttons, text, etc.
+
+## Layout Specification
+
+```
+Desktop (≥768px):
+┌─────────────────────────────────────────────────┐
+│  ┌──────────────────┐  ┌──────────────────────┐ │
+│  │                  │  │                      │ │
+│  │  Edit as you     │  │    [Animated Logo]   │ │
+│  │  record          │  │                      │ │
+│  │                  │  │    ▪ ▪ ▪            │ │
+│  │  Description...  │  │    Flowmaster        │ │
+│  │                  │  │    LIVE STUDIO       │ │
+│  │  [CTA] [CTA]     │  │                      │ │
+│  │                  │  │                      │ │
+│  └──────────────────┘  └──────────────────────┘ │
+└─────────────────────────────────────────────────┘
+        ~50%                    ~50%
+```
+
+## CSS Approach
+
+```css
+.hero-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem; /* adjust as needed */
+  align-items: center;
+  max-width: 1200px; /* or existing max-width */
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.hero-text {
+  text-align: left;
+}
+
+.hero-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+```
+
+## Acceptance Criteria
+
+- [ ] Hero displays as two columns on desktop
+- [ ] Text content is in the left column, left-aligned
+- [ ] Animated logo is in the right column, centered within its space
+- [ ] "FLOWMASTER LIVE STUDIO" tagline text removed from hero
+- [ ] Columns are vertically centered relative to each other
+- [ ] Appropriate spacing between columns
+- [ ] No horizontal overflow or layout breaking
+- [ ] Existing button styles preserved
+- [ ] Visual appearance matches the mockup in `intended-desktop-look-look.jpg`
+
+## Files to Modify
+
+- Hero section file (identified in Task 01)
+- Possibly create new CSS or modify existing hero styles
+- Import AnimatedLogo component
+
+## Notes
+
+- Keep mobile styles unchanged for now (Task 06 handles responsive)
+- The logo should have some breathing room, not crammed to edges
+- Maintain the dark background aesthetic
+- Text column content should feel balanced with the logo column

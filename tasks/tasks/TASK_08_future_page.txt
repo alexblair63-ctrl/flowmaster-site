@@ -1,0 +1,118 @@
+# Task 08: Future Features Page
+
+## Goal
+Create the roadmap page showing upcoming features and the interface mockup.
+
+---
+
+## 8.1 Future Page
+
+**src/pages/future.astro:**
+```astro
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Button from '../components/Button.astro';
+
+const roadmap = [
+  {
+    title: 'Unified Interface',
+    description: 'All three tools in one window. Tabbed workflow: Record → Edit → Clean. Real-time audio levels and source management.',
+    status: 'In Development',
+    icon: '🖥️',
+  },
+  {
+    title: 'AI Assistant Tools',
+    description: 'Automatic highlight detection (detect exciting moments without pressing F9). Smart silence removal. Scene detection and auto-chaptering.',
+    status: 'Planned',
+    icon: '🤖',
+  },
+  {
+    title: 'Direct Editor Export',
+    description: 'One-click export to Premiere Pro. DaVinci Resolve timeline integration. CapCut project file generation. Markers and cuts pre-applied.',
+    status: 'Planned',
+    icon: '📤',
+  },
+];
+---
+
+<BaseLayout title="Future Features">
+  <!-- Hero -->
+  <section class="section-padding pt-32">
+    <div class="container-main text-center">
+      <h1 class="mb-4">What We're Building</h1>
+      <p class="text-xl text-gray-400 max-w-2xl mx-auto">
+        The future of Flowmaster
+      </p>
+    </div>
+  </section>
+  
+  <!-- Mockup Section -->
+  <section class="section-padding pt-8">
+    <div class="container-main">
+      <div class="max-w-4xl mx-auto">
+        <h2 class="text-center mb-8">Unified Flowmaster Interface</h2>
+        
+        <!-- TODO: Replace with actual mockup image -->
+        <div class="aspect-video bg-bg-secondary rounded-xl border border-bg-tertiary flex items-center justify-center mb-4">
+          <div class="text-center text-gray-500">
+            <div class="text-6xl mb-4">🖥️</div>
+            <p>Interface mockup</p>
+            <p class="text-sm">(mockup-interface.png)</p>
+          </div>
+        </div>
+        <p class="text-center text-gray-500 text-sm">Coming Soon</p>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Roadmap -->
+  <section class="section-padding">
+    <div class="container-main">
+      <h2 class="text-center mb-12">Roadmap</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {roadmap.map(item => (
+          <div class="card">
+            <div class="text-4xl mb-4">{item.icon}</div>
+            <div class="text-xs font-semibold text-brand-red mb-2 uppercase tracking-wide">
+              {item.status}
+            </div>
+            <h3 class="text-xl font-semibold mb-3">{item.title}</h3>
+            <p class="text-gray-400 text-sm">{item.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+  
+  <!-- CTA -->
+  <section class="section-padding text-center bg-bg-secondary">
+    <div class="container-main">
+      <h2 class="mb-4">Get notified when new features drop</h2>
+      <p class="text-gray-400 mb-8">Join our Discord community for updates and early access.</p>
+      <Button href="https://discord.gg/S8uJpcK3qJ" size="lg">Join Discord</Button>
+    </div>
+  </section>
+</BaseLayout>
+```
+
+---
+
+## Acceptance Criteria
+
+- [ ] Page has hero with title
+- [ ] Mockup placeholder displays prominently
+- [ ] 3 roadmap items display with status badges
+- [ ] CTA links to Discord
+- [ ] Page accessible at /future
+
+---
+
+## Testing
+
+```bash
+npm run dev
+# Navigate to http://localhost:4321/future
+# Verify mockup placeholder visible
+# Verify 3 roadmap cards display
+```

@@ -1,0 +1,148 @@
+# Task 05: Implement Parallax and Breathing Effects
+
+## Objective
+
+After the intro animation completes, add a continuous breathing/bobbing animation and mouse-tracking parallax effect to the logo (desktop only for parallax).
+
+## Context
+
+The logo should feel "alive" after it finishes animating in. This is achieved through:
+1. A slow, continuous breathing/bobbing motion (always active)
+2. Mouse position tracking that shifts the logo slightly toward the cursor (desktop only)
+
+The entire logo moves as a unified group - individual elements don't separate.
+
+Reference the existing parallax on the "Easy as 1, 2, 3" section for stylistic consistency (findings from Task 01).
+
+## Specifications
+
+### Breathing Animation
+- Slow, continuous vertical bob
+- Subtle scale pulse (very slight)
+- Combined motion, not jarring
+- CSS-based, runs indefinitely
+- Active on both desktop and mobile
+
+### Mouse Parallax (Desktop Only)
+- Logo shifts toward cursor position
+- Maximum drift: ~20px in any direction
+- Smooth easing on movement (not 1:1 instant tracking)
+- Applied to the entire logo group wrapper
+- Should feel cohesive with existing site parallax
+
+## Steps
+
+1. Create `src/scripts/logo-parallax.js`
+2. Add breathing keyframe animation to CSS
+3. Implement mouse move listener for parallax
+4. Apply parallax transform to logo wrapper
+5. Ensure breathing and parallax combine smoothly
+6. Disable mouse parallax on mobile/touch devices
+7. Start effects only after intro animation completes (~2.25s delay)
+
+## CSS - Breathing Animation
+
+```css
+@keyframes breathe {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-8px) scale(1.02);
+  }
+}
+
+.logo-parallax-wrapper.animation-complete {
+  animation: breathe 4s ease-in-out infinite;
+}
+```
+
+## JavaScript - Mouse Parallax
+
+```javascript
+// logo-parallax.js
+
+document.addEventListener('DOMContentLoaded', () => {
+  const logoWrapper = document.querySelector('.logo-parallax-wrapper');
+  if (!logoWrapper) return;
+
+  const maxDrift = 20; // pixels
+  const easing = 0.08; // smoothing factor
+  
+  let targetX = 0;
+  let targetY = 0;
+  let currentX = 0;
+  let currentY = 0;
+  let animationStarted = false;
+
+  // Wait for intro animation to complete
+  setTimeout(() => {
+    logoWrapper.classList.add('animation-complete');
+    animationStarted = true;
+  }, 2250);
+
+  // Only on non-touch devices
+  if (window.matchMedia('(hover: hover)').matches) {
+    document.addEventListener('mousemove', (e) => {
+      if (!animationStarted) return;
+      
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+      
+      // Calculate offset from center (-1 to 1)
+      const offsetX = (e.clientX - centerX) / centerX;
+      const offsetY = (e.clientY - centerY) / centerY;
+      
+      targetX = offsetX * maxDrift;
+      targetY = offsetY * maxDrift;
+    });
+
+    function animate() {
+      currentX += (targetX - currentX) * easing;
+      currentY += (targetY - currentY) * easing;
+      
+      logoWrapper.style.setProperty('--parallax-x', `${currentX}px`);
+      logoWrapper.style.setProperty('--parallax-y', `${currentY}px`);
+      
+      requestAnimationFrame(animate);
+    }
+    
+    animate();
+  }
+});
+```
+
+```css
+.logo-parallax-wrapper {
+  transform: translate(var(--parallax-x, 0), var(--parallax-y, 0));
+  transition: transform 0.1s ease-out;
+}
+
+/* Combine with breathing when both active */
+.logo-parallax-wrapper.animation-complete {
+  animation: breathe 4s ease-in-out infinite;
+  transform: translate(var(--parallax-x, 0), var(--parallax-y, 0));
+}
+```
+
+## Acceptance Criteria
+
+- [ ] Breathing animation activates after intro animation completes
+- [ ] Breathing motion is slow and subtle (not distracting)
+- [ ] Mouse parallax works on desktop, shifting logo toward cursor
+- [ ] Maximum parallax drift is approximately 20px
+- [ ] Parallax movement is smooth/eased, not jittery
+- [ ] Parallax is disabled on touch/mobile devices
+- [ ] Breathing continues on mobile (parallax just disabled)
+- [ ] Logo moves as unified group (elements don't separate)
+- [ ] Effects run indefinitely while hero is visible
+- [ ] Performance is smooth (no dropped frames)
+- [ ] Parallax style is consistent with existing "Easy as 1,2,3" section
+
+## Testing
+
+- Move mouse around screen, verify logo responds smoothly
+- Check that logo doesn't drift too far from its position
+- Test on mobile device or emulator - breathing works, no parallax
+- Verify no layout shift or jank
+- Confirm breathing and parallax combine without conflict

@@ -1,0 +1,393 @@
+# Task 06: Homepage Remaining Sections
+
+## Goal
+Complete the homepage with How It Works, Features Preview, Future Features Preview, Testimonials, and Final CTA sections.
+
+---
+
+## 6.1 How It Works Section
+
+**src/components/HowItWorks.astro:**
+```astro
+---
+const steps = [
+  {
+    number: '01',
+    title: 'Record your session',
+    description: 'Open OBS, hit record, and play your game as usual.',
+  },
+  {
+    number: '02',
+    title: 'Mark the moments',
+    description: 'Press F9 whenever something highlight-worthy happens.',
+  },
+  {
+    number: '03',
+    title: 'Run AutoCut',
+    description: 'One click to trim your footage to just the marked segments.',
+  },
+  {
+    number: '04',
+    title: 'Clean up',
+    description: 'Delete massive original files, keep just the edited versions.',
+  },
+];
+---
+
+<section id="how-it-works" class="section-padding bg-bg-secondary">
+  <div class="container-main">
+    <h2 class="text-center mb-4">How It Works</h2>
+    <p class="text-center text-gray-400 mb-16 max-w-2xl mx-auto">
+      From recording to final edit in four simple steps
+    </p>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      {steps.map((step, index) => (
+        <div class="step-item text-center md:text-left">
+          <div class="text-5xl font-heading font-bold text-brand-red/30 mb-4">
+            {step.number}
+          </div>
+          <h3 class="text-xl font-semibold mb-2">{step.title}</h3>
+          <p class="text-gray-400">{step.description}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+```
+
+---
+
+## 6.2 Features Preview Section
+
+**src/components/FeaturesPreview.astro:**
+```astro
+---
+import Button from './Button.astro';
+
+const features = [
+  {
+    icon: '🎮',
+    title: 'Works with OBS',
+    description: 'Integrates seamlessly with your existing setup',
+  },
+  {
+    icon: '⚡',
+    title: 'No re-encoding',
+    description: 'Stream copy means instant exports, no quality loss',
+  },
+  {
+    icon: '📹',
+    title: 'Webcam sync',
+    description: 'Automatically matches your webcam footage too',
+  },
+  {
+    icon: '🗑️',
+    title: 'Recycle bin safe',
+    description: 'Deleted files go to recycle bin, always recoverable',
+  },
+];
+---
+
+<section id="features-preview" class="section-padding">
+  <div class="container-main">
+    <h2 class="text-center mb-4">Features</h2>
+    <p class="text-center text-gray-400 mb-12 max-w-2xl mx-auto">
+      Everything you need to eliminate pre-editing
+    </p>
+    
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      {features.map(feature => (
+        <div class="card text-center hover:border-brand-red/50 transition-colors">
+          <div class="text-4xl mb-4">{feature.icon}</div>
+          <h3 class="text-lg font-semibold mb-2">{feature.title}</h3>
+          <p class="text-gray-400 text-sm">{feature.description}</p>
+        </div>
+      ))}
+    </div>
+    
+    <div class="text-center">
+      <Button href="/features" variant="secondary">
+        See all features →
+      </Button>
+    </div>
+  </div>
+</section>
+```
+
+---
+
+## 6.3 Future Features Preview Section
+
+**src/components/FuturePreview.astro:**
+```astro
+---
+import Button from './Button.astro';
+
+const roadmapItems = [
+  'Unified interface for seamless workflow',
+  'AI assistant tools for smart editing',
+  'Direct export to Premiere, DaVinci, CapCut',
+];
+---
+
+<section id="future-preview" class="section-padding bg-bg-secondary">
+  <div class="container-main">
+    <h2 class="text-center mb-4">What We're Building</h2>
+    <p class="text-center text-gray-400 mb-12 max-w-2xl mx-auto">
+      A glimpse at the future of Flowmaster
+    </p>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      
+      <!-- Mockup Image -->
+      <div class="order-2 lg:order-1">
+        <!-- TODO: Replace with actual mockup image -->
+        <div class="aspect-video bg-bg-tertiary rounded-xl border border-gray-700 flex items-center justify-center">
+          <div class="text-center text-gray-500">
+            <div class="text-6xl mb-4">🖥️</div>
+            <p>Interface mockup coming soon</p>
+            <p class="text-sm">(mockup-interface.png)</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Roadmap Items -->
+      <div class="order-1 lg:order-2">
+        <h3 class="text-2xl font-heading font-bold mb-6">Coming Soon</h3>
+        <ul class="space-y-4 mb-8">
+          {roadmapItems.map(item => (
+            <li class="flex items-start gap-3">
+              <span class="text-brand-red mt-1">✓</span>
+              <span class="text-gray-300">{item}</span>
+            </li>
+          ))}
+        </ul>
+        <Button href="/future" variant="secondary">
+          See our roadmap →
+        </Button>
+      </div>
+      
+    </div>
+  </div>
+</section>
+```
+
+---
+
+## 6.4 Testimonials Section
+
+**src/components/Testimonials.astro:**
+```astro
+---
+// Placeholder testimonials - to be replaced
+const testimonials = [
+  {
+    name: 'Alex G.',
+    role: 'Gaming Creator',
+    quote: 'Flowmaster cut my editing time in half. I can actually post consistently now.',
+    avatar: null,
+  },
+  {
+    name: 'Jordan M.',
+    role: 'Streamer',
+    quote: 'The F9 hotkey is so intuitive. I mark moments without even thinking about it.',
+    avatar: null,
+  },
+  {
+    name: 'Casey R.',
+    role: 'YouTuber',
+    quote: 'Finally, I can delete those massive files without worrying. AutoCleaner is a lifesaver.',
+    avatar: null,
+  },
+  {
+    name: 'Taylor S.',
+    role: 'Content Creator',
+    quote: 'No more scrubbing through 4-hour recordings. This is how editing should work.',
+    avatar: null,
+  },
+  {
+    name: 'Morgan P.',
+    role: 'Variety Streamer',
+    quote: 'Simple, fast, and it just works. Exactly what I needed.',
+    avatar: null,
+  },
+];
+---
+
+<section id="testimonials" class="section-padding">
+  <div class="container-main">
+    <h2 class="text-center mb-4">What Creators Are Saying</h2>
+    <p class="text-center text-gray-400 mb-12">
+      <!-- PLACEHOLDER: Replace with real testimonials -->
+      Join the growing community of creators using Flowmaster
+    </p>
+    
+    <!-- Video Testimonial Placeholder -->
+    <div class="max-w-3xl mx-auto mb-16">
+      <div class="aspect-video bg-bg-secondary rounded-xl border border-bg-tertiary flex items-center justify-center cursor-pointer hover:border-brand-red/50 transition-colors group">
+        <div class="text-center">
+          <div class="w-20 h-20 rounded-full bg-brand-red/20 flex items-center justify-center mx-auto mb-4 group-hover:bg-brand-red/30 transition-colors">
+            <svg class="w-10 h-10 text-brand-red" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </div>
+          <p class="text-gray-400">Video testimonial coming soon</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Testimonial Carousel -->
+    <div class="testimonial-carousel relative">
+      <div class="overflow-hidden">
+        <div class="testimonial-track flex gap-6 transition-transform duration-300" id="testimonial-track">
+          {testimonials.map((t, index) => (
+            <div class="testimonial-card flex-shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
+              <div class="card h-full">
+                <p class="text-gray-300 mb-4 italic">"{t.quote}"</p>
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-full bg-brand-red/20 flex items-center justify-center text-brand-red font-bold">
+                    {t.name.charAt(0)}
+                  </div>
+                  <div>
+                    <div class="font-semibold">{t.name}</div>
+                    <div class="text-sm text-gray-500">{t.role}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      <!-- Navigation dots -->
+      <div class="flex justify-center gap-2 mt-8">
+        {[0, 1, 2].map(i => (
+          <button 
+            class="carousel-dot w-2 h-2 rounded-full bg-gray-600 hover:bg-gray-400 transition-colors"
+            data-index={i}
+            aria-label={`Go to slide ${i + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+    
+  </div>
+</section>
+
+<script>
+  // Simple carousel logic
+  const track = document.getElementById('testimonial-track');
+  const dots = document.querySelectorAll('.carousel-dot');
+  let currentIndex = 0;
+  
+  function updateCarousel(index: number) {
+    if (!track) return;
+    const cardWidth = track.children[0]?.getBoundingClientRect().width || 0;
+    const gap = 24; // 6 * 4 = 24px gap
+    track.style.transform = `translateX(-${index * (cardWidth + gap)}px)`;
+    
+    dots.forEach((dot, i) => {
+      dot.classList.toggle('bg-brand-red', i === index);
+      dot.classList.toggle('bg-gray-600', i !== index);
+    });
+    currentIndex = index;
+  }
+  
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      const index = parseInt(dot.getAttribute('data-index') || '0');
+      updateCarousel(index);
+    });
+  });
+  
+  // Initialize
+  updateCarousel(0);
+</script>
+```
+
+---
+
+## 6.5 CTA Section
+
+**src/components/CTASection.astro:**
+```astro
+---
+import Button from './Button.astro';
+---
+
+<section id="cta" class="section-padding bg-gradient-to-b from-bg-primary to-bg-secondary">
+  <div class="container-main text-center">
+    <h2 class="mb-4">Ready to stop wasting time in post?</h2>
+    <p class="text-xl text-gray-400 max-w-2xl mx-auto mb-8">
+      Join the beta and get <span class="text-brand-red font-semibold">50% off your first year</span> when we launch.
+    </p>
+    
+    <Button href="/download" size="lg">
+      Download Free Beta
+    </Button>
+    
+    <p class="text-sm text-gray-600 mt-4">
+      Windows 10/11 • No credit card required
+    </p>
+  </div>
+</section>
+```
+
+---
+
+## 6.6 Complete Index Page
+
+**src/pages/index.astro:**
+```astro
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import ThreeStepAnimation from '../components/ThreeStepAnimation.astro';
+import HowItWorks from '../components/HowItWorks.astro';
+import FeaturesPreview from '../components/FeaturesPreview.astro';
+import FuturePreview from '../components/FuturePreview.astro';
+import Testimonials from '../components/Testimonials.astro';
+import CTASection from '../components/CTASection.astro';
+---
+
+<BaseLayout title="Home">
+  <Hero />
+  <ThreeStepAnimation />
+  <HowItWorks />
+  <FeaturesPreview />
+  <FuturePreview />
+  <Testimonials />
+  <CTASection />
+</BaseLayout>
+```
+
+---
+
+## Acceptance Criteria
+
+- [ ] How It Works section displays 4 steps in a grid
+- [ ] Features Preview shows 4 feature cards
+- [ ] Features Preview has "See all features" link to /features
+- [ ] Future Preview shows mockup placeholder and 3 roadmap items
+- [ ] Future Preview has "See our roadmap" link to /future
+- [ ] Testimonials section has video placeholder with play button
+- [ ] Testimonials carousel shows 5 cards
+- [ ] Carousel has navigation dots that work
+- [ ] CTA section has strong headline with 50% off mention
+- [ ] CTA section has download button and Windows note
+- [ ] All sections have proper spacing (section-padding)
+- [ ] Alternating backgrounds (primary/secondary) for visual rhythm
+
+---
+
+## Testing
+
+```bash
+npm run dev
+# Scroll through entire homepage
+# Verify all sections render
+# Click carousel dots - cards should slide
+# Click "See all features" - should go to /features (will 404 until created)
+# Click "Download Free Beta" - should go to /download (will 404 until created)
+```

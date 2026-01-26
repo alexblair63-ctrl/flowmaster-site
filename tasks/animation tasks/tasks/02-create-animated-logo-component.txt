@@ -1,0 +1,82 @@
+# Task 02: Create Animated Logo Component
+
+## Objective
+
+Create a new Astro component that contains the logo SVG elements structured for animation.
+
+## Context
+
+The logo consists of 5 animatable parts:
+1. Red square (leftmost)
+2. Yellow square (center)
+3. Green square (rightmost)
+4. "Flowmaster" text (below squares)
+5. "LIVE STUDIO" text (bottom, smaller, letter-spaced)
+
+The squares are horizontally aligned and equidistant. Reference `LogoAssets/Logos/LogoHorizontalLockup.svg` for the final composed layout.
+
+## Steps
+
+1. Create `src/components/AnimatedLogo.astro`
+2. Inline the SVG elements (not as external references) for animation control
+3. Structure with appropriate class names for each animatable element
+4. Wrap all elements in a container for unified parallax movement post-animation
+5. Set initial states (opacity: 0, transforms for starting positions)
+
+## SVG Assets to Use
+
+From `LogoAssets/Logos/`:
+- `RedBox.svg`
+- `YellowBox.svg`
+- `GreenBox.svg`
+- `FlowmasterType.svg`
+- `LiveStudioType.svg`
+
+Or extract the relevant paths from `LogoHorizontalLockup.svg` which contains all elements properly positioned.
+
+## Component Structure
+
+```astro
+---
+// AnimatedLogo.astro
+---
+
+<div class="logo-animation-container">
+  <div class="logo-parallax-wrapper">
+    <div class="logo-squares">
+      <svg class="logo-square logo-red">...</svg>
+      <svg class="logo-square logo-yellow">...</svg>
+      <svg class="logo-square logo-green">...</svg>
+    </div>
+    <svg class="logo-text-flowmaster">...</svg>
+    <svg class="logo-text-livestudio">...</svg>
+  </div>
+</div>
+
+<style>
+  /* Initial hidden states */
+  .logo-square,
+  .logo-text-flowmaster,
+  .logo-text-livestudio {
+    opacity: 0;
+  }
+</style>
+```
+
+## Acceptance Criteria
+
+- [ ] Component file created at `src/components/AnimatedLogo.astro`
+- [ ] All 5 logo elements are present and properly structured
+- [ ] SVG code is inlined (not external references)
+- [ ] Each element has a distinct class for animation targeting
+- [ ] Elements are visually positioned to match final logo composition
+- [ ] Initial state has all elements hidden (opacity: 0)
+- [ ] Wrapper div exists for unified parallax movement
+- [ ] Component renders without errors when imported
+
+## Notes
+
+- Use the full SVG path data from the source files
+- Maintain the exact proportions and spacing from the original logo
+- The squares should be ~equal size and horizontally aligned with even gaps
+- Consider using CSS custom properties for sizing to aid responsiveness

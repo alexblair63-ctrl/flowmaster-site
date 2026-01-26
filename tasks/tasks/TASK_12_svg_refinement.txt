@@ -1,0 +1,95 @@
+# Task 12: SVG Animation Refinement
+
+## Goal
+Refine the placeholder SVGs based on user sketches/feedback. This task is iterative.
+
+---
+
+## 12.1 Process
+
+1. **Get user sketches** - Ask user for visual reference/sketches
+2. **Refine SVGs** - Update the SVG code to match vision
+3. **Test animations** - Verify idle, hover, and mobile states
+4. **Iterate** - Repeat until user is satisfied
+
+---
+
+## 12.2 SVG Requirements Recap
+
+### Record Animation (Step 1 - Red #c94a4a)
+- **Subject:** Finger pressing F9 key
+- **Idle state:** Subtle float up/down
+- **Active state:** Finger bouncing up and down on key
+- **Style:** Clean, geometric, recognizable
+
+### AutoCut Animation (Step 2 - Yellow #d4a84a)
+- **Subject:** Scissors cutting through film strip
+- **Idle state:** Subtle float up/down
+- **Active state:** Scissors open/close while moving across film
+- **Style:** Film strip with perforations, classic scissors shape
+
+### AutoClean Animation (Step 3 - Green #4ac94a)
+- **Subject:** Duster sweeping with dust clouds
+- **Idle state:** Subtle float up/down
+- **Active state:** Duster sways side to side, dust fades in/out
+- **Style:** Feather duster, particle-like dust clouds
+
+---
+
+## 12.3 Animation Timing Guidelines
+
+```css
+/* Idle float - all SVGs */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.idle { animation: float 3s ease-in-out infinite; }
+
+/* Active animations should be faster */
+.active { animation-duration: 1.5s - 2s; }
+```
+
+---
+
+## 12.4 Current Placeholder Locations
+
+- `src/components/animations/RecordAnimation.astro`
+- `src/components/animations/AutoCutAnimation.astro`
+- `src/components/animations/AutoCleanAnimation.astro`
+
+---
+
+## 12.5 Refinement Checklist
+
+For each SVG:
+
+- [ ] Matches user's vision/sketch
+- [ ] Uses correct step color
+- [ ] Idle animation is smooth and subtle
+- [ ] Active animation is engaging but not distracting
+- [ ] Works at different sizes (48x48 to 200x200)
+- [ ] Looks good on dark background
+- [ ] Animation pauses on prefers-reduced-motion
+
+---
+
+## Acceptance Criteria
+
+- [ ] All 3 SVGs refined based on user feedback
+- [ ] Animations feel cohesive (similar style/weight)
+- [ ] User approves final versions
+- [ ] SVGs are optimized (minimal code)
+
+---
+
+## Notes
+
+This task may span multiple sessions. Start with placeholders, get feedback, iterate.
+
+When user provides sketches:
+1. Analyze the sketch for key shapes/proportions
+2. Recreate in SVG code
+3. Add animation keyframes
+4. Test in browser
+5. Get feedback, repeat

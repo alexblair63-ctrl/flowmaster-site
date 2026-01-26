@@ -1,0 +1,51 @@
+# Website Task 01: Audit Current Download Modal
+
+## Objective
+
+Examine the existing download flow and email capture modal to understand what needs to be modified.
+
+## Context
+
+The flowmaster-site repository (Astro) currently has a download flow where users are prompted to enter their email before being allowed to download. This modal/dialog needs to be replaced with an attribution survey dropdown.
+
+## Steps
+
+1. Locate the download button(s) on the site (likely on homepage and/or dedicated downloads page)
+2. Find the modal/dialog component that appears when download is clicked
+3. Document the current structure:
+   - What triggers the modal?
+   - How is email currently captured and stored/sent?
+   - What happens after email submission?
+   - How does the actual download get triggered?
+4. Identify all files involved in this flow
+5. Note any validation logic currently in place
+6. Check if attribution data is already being collected anywhere
+
+## Deliverables
+
+Document or comments noting:
+- File paths for all relevant components
+- Current modal trigger mechanism
+- Email handling logic (where does it go?)
+- Download trigger mechanism
+- Any existing analytics or tracking
+
+## Acceptance Criteria
+
+- [ ] Download modal component file(s) identified
+- [ ] Email capture logic understood
+- [ ] Download trigger mechanism understood
+- [ ] All related files documented
+- [ ] Clear picture of what needs to change
+
+## Files to Examine
+
+Likely locations:
+- `src/pages/index.astro` (homepage)
+- `src/pages/downloads.astro` or similar
+- `src/components/` - look for Modal, Dialog, Download components
+- Any API routes in `src/pages/api/`
+
+## Notes
+
+This is a read-only audit task. Do not modify files yet.

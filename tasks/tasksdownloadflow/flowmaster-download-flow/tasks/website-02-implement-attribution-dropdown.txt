@@ -1,0 +1,101 @@
+# Website Task 02: Implement Attribution Dropdown
+
+## Objective
+
+Replace the email capture modal with a "How did you hear about us?" attribution dropdown that must be completed before download proceeds.
+
+## Context
+
+Users should no longer be asked for their email on the website. Instead, they complete a quick attribution survey. This data is valuable for marketing analytics and is low-friction for users.
+
+## Attribution Options
+
+The dropdown must include exactly these options:
+1. YouTube
+2. LinkedIn
+3. Google
+4. From somebody I follow
+5. From a friend or colleague
+6. Other
+
+## Requirements
+
+### UI/UX
+- Modal/dialog appears when user clicks any download button
+- Clean, simple design consistent with existing site aesthetic
+- Dropdown is required - cannot proceed without selection
+- Clear call-to-action button (e.g., "Continue to Download")
+- Button disabled or hidden until selection is made
+
+### Behavior
+- On selection + confirm: modal closes, download begins automatically
+- Attribution choice should be logged/stored somewhere (see Data Storage below)
+- If user closes modal without completing, no download occurs
+
+### Data Storage
+
+The attribution selection needs to be captured. Options (decide based on what's already in the codebase):
+- Send to an API endpoint
+- Log to a simple JSON file
+- Send to an analytics service already in use
+- Store in localStorage and batch send later
+
+At minimum, log to console during development so data isn't lost.
+
+## Implementation
+
+### Modal Content Structure
+
+```
+┌─────────────────────────────────────────┐
+│                                         │
+│   How did you hear about Flowmaster?    │
+│                                         │
+│   ┌─────────────────────────────────┐   │
+│   │ Select an option...           ▼ │   │
+│   └─────────────────────────────────┘   │
+│                                         │
+│          [ Continue to Download ]       │
+│                                         │
+└─────────────────────────────────────────┘
+```
+
+### Dropdown Options
+
+```javascript
+const attributionOptions = [
+  { value: 'youtube', label: 'YouTube' },
+  { value: 'linkedin', label: 'LinkedIn' },
+  { value: 'google', label: 'Google' },
+  { value: 'influencer', label: 'From somebody I follow' },
+  { value: 'referral', label: 'From a friend or colleague' },
+  { value: 'other', label: 'Other' }
+];
+```
+
+## Acceptance Criteria
+
+- [ ] Email input field completely removed from download flow
+- [ ] Attribution dropdown appears on download click
+- [ ] All 6 options present in dropdown
+- [ ] Cannot proceed without making a selection
+- [ ] Download triggers automatically after selection + confirm
+- [ ] Attribution data is logged/stored somewhere accessible
+- [ ] Modal styling consistent with site design
+- [ ] Works on both desktop and mobile
+- [ ] Existing download functionality still works (file actually downloads)
+
+## Files to Modify
+
+Based on Task 01 audit findings. Likely:
+- Modal/dialog component
+- Download button click handlers
+- Possibly create new API route for attribution logging
+
+## Testing
+
+- Click download without selecting → should not proceed
+- Select option, click continue → download should start
+- Check that attribution data is being captured
+- Test on mobile viewport
+- Test all download buttons on site trigger the same flow

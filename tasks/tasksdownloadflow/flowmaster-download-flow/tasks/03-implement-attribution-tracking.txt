@@ -1,0 +1,79 @@
+# Task 03: Implement Attribution Tracking
+
+## Objective
+
+Store the user's attribution selection so it can be analyzed later.
+
+## Context
+
+When a user selects how they heard about Flowmaster and proceeds to download, we need to capture and store that data point. This is valuable for understanding which marketing channels are driving downloads.
+
+## Data to Capture
+
+For each download, store:
+- `attribution`: The selected option value (youtube, linkedin, google, influencer, friend, other)
+- `timestamp`: When the download was initiated
+- `page`: Which page the download was triggered from (if multiple download buttons exist)
+
+## Implementation Options
+
+Choose the most appropriate based on existing site infrastructure:
+
+### Option A: Existing Analytics Integration
+If the site already uses an analytics platform (Google Analytics, Plausible, etc.), fire an event:
+
+```javascript
+// Google Analytics 4 example
+gtag('event', 'download_initiated', {
+  'attribution_source': selectedValue,
+  'download_version': 'v0.8.5'
+});
+```
+
+### Option B: Simple Backend Endpoint
+If there's an existing API or form handler:
+
+```javascript
+fetch('/api/track-download', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    attribution: selectedValue,
+    timestamp: new Date().toISOString()
+  })
+});
+```
+
+### Option C: localStorage (Temporary Fallback)
+If no backend exists yet, store locally for later retrieval:
+
+```javascript
+const downloads = JSON.parse(localStorage.getItem('flowmaster_downloads') || '[]');
+downloads.push({
+  attribution: selectedValue,
+  timestamp: new Date().toISOString()
+});
+localStorage.setItem('flowmaster_downloads', JSON.stringify(downloads));
+```
+
+## Steps
+
+1. Determine which tracking method is appropriate (check for existing analytics)
+2. Add tracking call to the download button click handler
+3. Ensure tracking fires BEFORE or simultaneously with download trigger
+4. Test that data is being captured correctly
+5. Document where the data is stored and how to access it
+
+## Acceptance Criteria
+
+- [ ] Attribution selection is captured on download
+- [ ] Timestamp is recorded with each download
+- [ ] Data is stored/sent to accessible location
+- [ ] Tracking does not block or delay the download
+- [ ] Implementation documented (where data lives, how to query it)
+
+## Notes
+
+- Don't let tracking failure prevent the download - wrap in try/catch if needed
+- If using localStorage as temporary solution, note that this only captures data on that device and will be lost if user clears browser data
+- Ideal future state is server-side storage, but localStorage works for initial validation

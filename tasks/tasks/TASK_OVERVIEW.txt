@@ -1,0 +1,134 @@
+# Flowmaster Website - Task Overview
+
+**Estimated Total Time:** 15-25 hours
+**Project Type:** Marketing website, Astro + Tailwind
+
+---
+
+## Task Summary
+
+| # | Task | Priority | Est. Time | Dependencies |
+|---|------|----------|-----------|--------------|
+| 01 | Project Setup & Structure | High | 1-2h | None |
+| 02 | Design System & Global Styles | High | 1-2h | 01 |
+| 03 | Layout Components | High | 2-3h | 02 |
+| 04 | Homepage Hero | High | 1-2h | 03 |
+| 05 | Three-Step Animation Section | High | 3-4h | 03 |
+| 06 | Homepage Remaining Sections | Medium | 2-3h | 04, 05 |
+| 07 | Features Page | Medium | 1-2h | 03 |
+| 08 | Future Features Page | Medium | 1h | 03 |
+| 09 | About Page | Medium | 1h | 03 |
+| 10 | Docs Pages | Medium | 1-2h | 03 |
+| 11 | Download Page | High | 2-3h | 03 |
+| 12 | SVG Animation Refinement | Low | 2-3h | 05 |
+| 13 | Polish & Responsive | Low | 2-3h | All |
+
+---
+
+## Recommended Order
+
+### Phase 1: Foundation (Tasks 01-03)
+Get the project running with design system and layout components.
+1. TASK_01 - Project setup
+2. TASK_02 - Design system  
+3. TASK_03 - Header, Footer, BaseLayout
+
+### Phase 2: Homepage Core (Tasks 04-06)
+Build the main landing page experience.
+4. TASK_04 - Hero section
+5. TASK_05 - Three-step animation (signature section)
+6. TASK_06 - Remaining homepage sections
+
+### Phase 3: Inner Pages (Tasks 07-11)
+Build out all subpages.
+7. TASK_07 - Features page
+8. TASK_08 - Future features page
+9. TASK_09 - About page
+10. TASK_10 - Docs pages
+11. TASK_11 - Download page
+
+### Phase 4: Polish (Tasks 12-13)
+Refinement and testing.
+12. TASK_12 - SVG animation refinement
+13. TASK_13 - Responsive testing and polish
+
+---
+
+## How to Use These Tasks
+
+### With Claude Code
+
+1. Share `PROJECT_CONTEXT.txt` at the start of each session
+2. Tell Claude Code which task you're working on
+3. Share the specific task file for detailed instructions
+4. Work through acceptance criteria one by one
+5. Test before moving to next task
+
+### Example Session
+
+```
+Session 1:
+"I'm building the Flowmaster website. Here's the project context:
+[paste PROJECT_CONTEXT.txt]
+
+Let's start with TASK_01 - Project Setup.
+[paste TASK_01_project_setup.txt]"
+
+Session 2:
+"Continuing Flowmaster website. Context:
+[paste PROJECT_CONTEXT.txt]
+
+TASK_01 is complete. Moving to TASK_02 - Design System.
+[paste TASK_02_design_system.txt]"
+```
+
+---
+
+## Key Technical Decisions
+
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| Framework | Astro | Static site, Claude Code friendly |
+| Styling | Tailwind CSS | Utility-first, fast development |
+| Animations | CSS + vanilla JS | No heavy libraries, performant |
+| Icons | Lucide | Lightweight, works with Astro |
+| Deployment | GitHub Pages | Free, simple |
+
+---
+
+## Files in This Package
+
+```
+flowmaster-website-tasks/
+├── PROJECT_CONTEXT.txt          # Master context document
+├── TASK_OVERVIEW.txt            # This file
+└── tasks/
+    ├── TASK_01_project_setup.txt
+    ├── TASK_02_design_system.txt
+    ├── TASK_03_layout_components.txt
+    ├── TASK_04_homepage_hero.txt
+    ├── TASK_05_three_step_animation.txt
+    ├── TASK_06_homepage_sections.txt
+    ├── TASK_07_features_page.txt
+    ├── TASK_08_future_page.txt
+    ├── TASK_09_about_page.txt
+    ├── TASK_10_docs_pages.txt
+    ├── TASK_11_download_page.txt
+    ├── TASK_12_svg_refinement.txt
+    └── TASK_13_polish.txt
+```
+
+---
+
+## Success Criteria for Launch
+
+- [ ] All pages render without errors
+- [ ] Navigation works on all pages
+- [ ] Nav fades in on scroll correctly
+- [ ] Three-step animations work (idle, hover, mobile)
+- [ ] Parallax effect works on desktop
+- [ ] Download page captures email
+- [ ] Responsive on mobile/tablet/desktop
+- [ ] All placeholder content clearly marked
+- [ ] Site loads fast (<3s)
+- [ ] Deploys to GitHub Pages

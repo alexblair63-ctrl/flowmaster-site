@@ -1,0 +1,70 @@
+# Task 02: Modify Download Modal
+
+## Objective
+
+Replace the email input field with a "How did you hear about us?" dropdown selector.
+
+## Context
+
+The current modal asks for email before download. We're replacing this with an attribution survey. The dropdown must be mandatory - users cannot proceed without selecting an option.
+
+## Dropdown Specification
+
+**Label:** "How did you hear about us?"
+
+**Options (in this order):**
+1. YouTube
+2. LinkedIn
+3. Google
+4. From somebody I follow
+5. From a friend or colleague
+6. Other
+
+**Behavior:**
+- Default state: No selection (placeholder text like "Select an option...")
+- Download button disabled until selection made
+- Once selected, download button becomes enabled
+- Clicking download with valid selection triggers the download
+
+## Steps
+
+1. Open the modal component identified in Task 01
+2. Remove the email input field
+3. Remove any email-related labels, helper text, or validation
+4. Add a `<select>` dropdown with the specified options
+5. Add a default/placeholder option that is not a valid selection
+6. Update form validation to require dropdown selection
+7. Ensure download button remains disabled until valid selection
+8. Preserve existing modal styling and UX (open/close behavior, backdrop, etc.)
+
+## Code Example
+
+```html
+<label for="attribution">How did you hear about us?</label>
+<select id="attribution" name="attribution" required>
+  <option value="" disabled selected>Select an option...</option>
+  <option value="youtube">YouTube</option>
+  <option value="linkedin">LinkedIn</option>
+  <option value="google">Google</option>
+  <option value="influencer">From somebody I follow</option>
+  <option value="friend">From a friend or colleague</option>
+  <option value="other">Other</option>
+</select>
+```
+
+## Acceptance Criteria
+
+- [ ] Email input field removed from modal
+- [ ] Dropdown added with all 6 options
+- [ ] Placeholder/default option shows "Select an option..." or similar
+- [ ] Download button disabled when no valid selection
+- [ ] Download button enabled after valid selection
+- [ ] Modal styling preserved (matches existing design)
+- [ ] Modal open/close behavior unchanged
+- [ ] No console errors or warnings
+
+## Notes
+
+- Keep the option values lowercase/kebab-case for consistent data storage
+- The "Other" option does not need a follow-up text field (keep it simple)
+- Maintain the existing button styling and positioning

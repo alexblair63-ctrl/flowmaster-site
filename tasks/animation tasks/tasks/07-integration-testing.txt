@@ -1,0 +1,128 @@
+# Task 07: Integration Testing and Polish
+
+## Objective
+
+Final testing, bug fixes, and polish to ensure the animation and layout work correctly across all scenarios.
+
+## Context
+
+All features have been implemented. This task focuses on:
+- Cross-browser testing
+- Performance optimization
+- Edge case handling
+- Visual polish and timing adjustments
+- Code cleanup
+
+## Testing Checklist
+
+### Animation
+- [ ] Intro animation plays on initial page load
+- [ ] Animation does not replay when scrolling away and back
+- [ ] Animation does not replay when navigating back to page (browser back button)
+- [ ] Timing feels natural - not too fast, not too slow
+- [ ] No "flash of unstyled content" before animation starts
+- [ ] Elements reach correct final positions
+- [ ] Smooth easing throughout (no jerky motion)
+
+### Parallax & Breathing
+- [ ] Breathing starts after intro completes (~2.25s)
+- [ ] Breathing is subtle and not distracting
+- [ ] Mouse parallax responds smoothly on desktop
+- [ ] Parallax drift stays within ~20px bounds
+- [ ] Logo stays aligned with page content (doesn't drift out of hero)
+- [ ] No parallax on touch devices
+- [ ] Breathing works on mobile
+
+### Layout
+- [ ] Desktop two-column layout displays correctly
+- [ ] Mobile stacked layout displays correctly
+- [ ] Transition between breakpoints is smooth
+- [ ] No layout shift during or after animation
+- [ ] Logo is properly sized on all viewports
+- [ ] Text alignment correct (left on desktop, center on mobile)
+- [ ] "FLOWMASTER LIVE STUDIO" tagline removed from hero
+
+### Cross-Browser
+- [ ] Chrome (latest)
+- [ ] Firefox (latest)
+- [ ] Safari (latest)
+- [ ] Edge (latest)
+- [ ] Mobile Safari (iOS)
+- [ ] Chrome Mobile (Android)
+
+### Performance
+- [ ] Animation runs at 60fps (no dropped frames)
+- [ ] No excessive CPU usage during idle breathing
+- [ ] No memory leaks from parallax event listeners
+- [ ] Page load time not significantly impacted
+
+### Accessibility
+- [ ] Animation respects `prefers-reduced-motion` media query
+- [ ] Content is still visible/accessible if CSS animations fail
+- [ ] No seizure-inducing rapid flashing
+
+## Reduced Motion Support
+
+Add support for users who prefer reduced motion:
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  .logo-square,
+  .logo-text-flowmaster,
+  .logo-text-livestudio {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  
+  .logo-parallax-wrapper {
+    animation: none;
+  }
+}
+```
+
+```javascript
+// In logo-parallax.js
+if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  // Skip all animations, show logo immediately
+  logoWrapper.classList.add('animation-complete');
+  return;
+}
+```
+
+## Polish Items
+
+- Fine-tune animation timing if needed
+- Adjust breathing speed/amplitude if too subtle or too much
+- Tweak parallax easing for best feel
+- Ensure logo sizing looks good at all viewport sizes
+- Clean up any unused CSS or commented code
+- Add code comments for maintainability
+
+## Bug Fixes
+
+Document and fix any issues found during testing:
+
+1. Issue: _______________
+   Fix: _______________
+
+2. Issue: _______________
+   Fix: _______________
+
+## Final Verification
+
+- [ ] Fresh page load shows complete animation sequence
+- [ ] Logo settles into correct position
+- [ ] Breathing and parallax activate smoothly
+- [ ] Mobile layout correct
+- [ ] Desktop layout correct
+- [ ] No console errors
+- [ ] Code is clean and commented
+- [ ] All acceptance criteria from previous tasks still pass
+
+## Deployment Notes
+
+- Ensure all new CSS/JS files are properly imported
+- Verify build process includes new assets
+- Test production build, not just dev server
+- Clear any CDN cache if applicable

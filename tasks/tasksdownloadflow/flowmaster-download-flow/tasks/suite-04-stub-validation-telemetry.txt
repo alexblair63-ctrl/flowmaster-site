@@ -1,0 +1,203 @@
+# Suite Task 04: Stub Validation and Telemetry
+
+## Objective
+
+Implement stubbed (placeholder) logic for key validation and usage telemetry, structured so it can be easily connected to a real backend later.
+
+## Context
+
+The real backend for key validation, email delivery, and telemetry doesn't exist yet. This task creates the interface and local logging so that:
+1. Development can continue without backend dependency
+2. When backend is ready, it's a simple swap
+
+## Part 1: Validation Stubs
+
+### Email "Sending"
+
+```python
+def send_access_key_to_email(email: str) -> dict:
+    """
+    STUBBED: In production, this would call an API to send the access key.
+    For now, it just logs and returns success.
+    """
+    log_event('email_submitted', {'email': email})
+    
+    # Simulate network delay (optional, for realistic feel)
+    # time.sleep(1)
+    
+    return {
+        'success': True,
+        'message': 'Access key sent (stubbed - no email actually sent)'
+    }
+```
+
+### Key Validation
+
+```python
+def validate_access_key(key: str) -> dict:
+    """
+    STUBBED: In production, this would validate against a database.
+    For now, accept any non-empty key.
+    """
+    if not key or len(key.strip()) == 0:
+        return {
+            'valid': False,
+            'message': 'Please enter an access key'
+        }
+    
+    log_event('key_validated', {'key_prefix': key[:4] + '...'})
+    
+    return {
+        'valid': True,
+        'message': 'Key accepted (stubbed - any key works)'
+    }
+```
+
+### Interface for Future Backend
+
+Create a configuration or abstraction layer:
+
+```python
+# config.py
+BACKEND_MODE = 'stub'  # Change to 'production' when ready
+BACKEND_API_URL = 'https://api.flowmaster.example.com'  # Future
+
+# validation.py
+from config import BACKEND_MODE
+
+def send_access_key_to_email(email: str) -> dict:
+    if BACKEND_MODE == 'stub':
+        return _stub_send_email(email)
+    else:
+        return _production_send_email(email)
+
+def validate_access_key(key: str) -> dict:
+    if BACKEND_MODE == 'stub':
+        return _stub_validate_key(key)
+    else:
+        return _production_validate_key(key)
+```
+
+## Part 2: Telemetry Stubs
+
+### Events to Track
+
+Capture these events for future analytics:
+
+| Event | Data | When |
+|-------|------|------|
+| `app_launched` | session_count, timestamp | Every launch |
+| `trial_session` | session_number, timestamp | Sessions 1-3 |
+| `gate_shown` | session_count, timestamp | Session 4+ first time |
+| `email_submitted` | email (hashed?), timestamp | User submits email |
+| `key_validated` | key_prefix, timestamp | User enters key |
+| `app_activated` | email, timestamp | Successful activation |
+| `feature_used` | feature_name, duration, timestamp | When user uses features |
+
+### Local Logging Implementation
+
+```python
+import json
+import os
+from datetime import datetime
+
+TELEMETRY_LOG_PATH = os.path.join(
+    os.getenv('APPDATA', '.'),
+    'Flowmaster',
+    'telemetry_log.jsonl'
+)
+
+def log_event(event_name: str, data: dict = None):
+    """
+    STUBBED: Logs events locally as JSONL.
+    In production, this would send to an analytics endpoint.
+    """
+    event = {
+        'event': event_name,
+        'timestamp': datetime.utcnow().isoformat(),
+        'data': data or {}
+    }
+    
+    # Ensure directory exists
+    os.makedirs(os.path.dirname(TELEMETRY_LOG_PATH), exist_ok=True)
+    
+    # Append to log file
+    with open(TELEMETRY_LOG_PATH, 'a') as f:
+        f.write(json.dumps(event) + '\n')
+    
+    # Also print for development visibility
+    print(f"[TELEMETRY] {event_name}: {data}")
+```
+
+### Example Telemetry Log Output
+
+```jsonl
+{"event": "app_launched", "timestamp": "2025-01-22T10:30:00Z", "data": {"session_count": 1}}
+{"event": "trial_session", "timestamp": "2025-01-22T10:30:01Z", "data": {"session_number": 1}}
+{"event": "app_launched", "timestamp": "2025-01-22T14:00:00Z", "data": {"session_count": 2}}
+{"event": "trial_session", "timestamp": "2025-01-22T14:00:01Z", "data": {"session_number": 2}}
+{"event": "app_launched", "timestamp": "2025-01-23T09:00:00Z", "data": {"session_count": 4}}
+{"event": "gate_shown", "timestamp": "2025-01-23T09:00:02Z", "data": {"session_count": 4}}
+{"event": "email_submitted", "timestamp": "2025-01-23T09:01:30Z", "data": {"email": "user@example.com"}}
+{"event": "key_validated", "timestamp": "2025-01-23T09:02:15Z", "data": {"key_prefix": "BETA..."}}
+{"event": "app_activated", "timestamp": "2025-01-23T09:02:16Z", "data": {"email": "user@example.com"}}
+```
+
+### Future Backend Integration Point
+
+```python
+# telemetry.py
+from config import BACKEND_MODE, BACKEND_API_URL
+import requests
+
+def log_event(event_name: str, data: dict = None):
+    if BACKEND_MODE == 'stub':
+        _log_locally(event_name, data)
+    else:
+        _send_to_backend(event_name, data)
+
+def _send_to_backend(event_name: str, data: dict):
+    """Future implementation"""
+    try:
+        requests.post(
+            f"{BACKEND_API_URL}/telemetry",
+            json={'event': event_name, 'data': data},
+            timeout=5
+        )
+    except Exception as e:
+        # Fail silently, don't break app for telemetry
+        _log_locally(event_name, data)  # Fallback to local
+```
+
+## Acceptance Criteria
+
+- [ ] `send_access_key_to_email()` function exists and returns success for any email
+- [ ] `validate_access_key()` function exists and returns valid for any non-empty key
+- [ ] `log_event()` function captures events to local JSONL file
+- [ ] All specified events are logged at appropriate points
+- [ ] Telemetry log file is created in appropriate location
+- [ ] Console output shows events during development
+- [ ] Configuration exists to switch between stub and production mode
+- [ ] Code structure allows easy backend integration later
+
+## Testing
+
+1. Launch app → check telemetry log has `app_launched` event
+2. Complete gate flow → check all events logged in sequence
+3. Inspect telemetry log file → should be valid JSONL
+4. Submit empty key → should fail validation
+5. Check console → should see event logs printed
+
+## Files to Create
+
+- `validation.py` or equivalent module
+- `telemetry.py` or equivalent module
+- `config.py` for backend mode switching
+- Update session counting and gate UI to call these functions
+
+## Notes
+
+- JSONL format (one JSON object per line) is easy to parse and append
+- Consider privacy: don't log full keys, maybe hash emails
+- Telemetry should fail silently - never crash the app
+- Keep stub implementations simple but representative of real API shape

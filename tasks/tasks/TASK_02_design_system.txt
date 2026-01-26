@@ -1,0 +1,253 @@
+# Task 02: Design System & Global Styles
+
+## Goal
+Establish the color palette, typography, and global CSS including the carbon texture background.
+
+---
+
+## 2.1 Tailwind Configuration
+
+**tailwind.config.mjs:**
+```javascript
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
+  theme: {
+    extend: {
+      colors: {
+        // Backgrounds
+        'bg-primary': '#0a0a0a',
+        'bg-secondary': '#141414',
+        'bg-tertiary': '#1a1a1a',
+        
+        // Brand
+        'brand-red': '#c94a4a',
+        'brand-red-bright': '#e05555',
+        
+        // Step colors
+        'step-record': '#c94a4a',
+        'step-autocut': '#d4a84a',
+        'step-autoclean': '#4ac94a',
+        
+        // Alenzie accent
+        'alenzie-mint': '#55ffa2',
+        
+        // Grays
+        'gray-100': '#f5f5f5',
+        'gray-300': '#d4d4d4',
+        'gray-500': '#737373',
+        'gray-700': '#404040',
+      },
+      fontFamily: {
+        'heading': ['"Space Grotesk"', 'sans-serif'],
+        'body': ['Inter', 'sans-serif'],
+      },
+    },
+  },
+  plugins: [],
+}
+```
+
+---
+
+## 2.2 Global CSS
+
+**src/styles/global.css:**
+```css
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base styles */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-bg-primary text-white font-body;
+    
+    /* Subtle carbon fiber texture */
+    background-color: #0a0a0a;
+    background-image: 
+      linear-gradient(45deg, #0d0d0d 25%, transparent 25%),
+      linear-gradient(-45deg, #0d0d0d 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #0d0d0d 75%),
+      linear-gradient(-45deg, transparent 75%, #0d0d0d 75%);
+    background-size: 4px 4px;
+    background-position: 0 0, 0 2px, 2px -2px, -2px 0px;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading font-bold;
+  }
+  
+  h1 {
+    @apply text-4xl md:text-5xl lg:text-6xl;
+  }
+  
+  h2 {
+    @apply text-3xl md:text-4xl;
+  }
+  
+  h3 {
+    @apply text-2xl md:text-3xl;
+  }
+  
+  p {
+    @apply text-gray-300 leading-relaxed;
+  }
+  
+  a {
+    @apply transition-colors duration-200;
+  }
+}
+
+/* Component classes */
+@layer components {
+  .container-main {
+    @apply max-w-6xl mx-auto px-6;
+  }
+  
+  .section-padding {
+    @apply py-20 md:py-24;
+  }
+  
+  .btn-primary {
+    @apply bg-brand-red hover:bg-brand-red-bright text-white font-semibold 
+           px-6 py-3 rounded-lg transition-all duration-200
+           hover:shadow-lg hover:shadow-brand-red/20;
+  }
+  
+  .btn-secondary {
+    @apply bg-bg-tertiary hover:bg-gray-700 text-white font-semibold
+           px-6 py-3 rounded-lg border border-gray-700 transition-all duration-200;
+  }
+  
+  .card {
+    @apply bg-bg-secondary rounded-xl p-6 border border-bg-tertiary;
+  }
+}
+
+/* Utility classes */
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-red to-brand-red-bright;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+```
+
+---
+
+## 2.3 Update BaseLayout
+
+**src/layouts/BaseLayout.astro:**
+```astro
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "Edit as you record - Video editing automation for content creators" } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <title>{title} | Flowmaster</title>
+  </head>
+  <body class="min-h-screen">
+    <slot />
+  </body>
+</html>
+```
+
+---
+
+## 2.4 Test Page with Styles
+
+**src/pages/index.astro:**
+```astro
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Home">
+  <main class="container-main section-padding">
+    <h1 class="mb-4">Flowmaster Live Studio</h1>
+    <p class="text-xl mb-8">Edit as you record</p>
+    
+    <div class="flex gap-4 mb-12">
+      <button class="btn-primary">Download Beta</button>
+      <button class="btn-secondary">Learn More</button>
+    </div>
+    
+    <!-- Color test -->
+    <div class="flex gap-4 mb-8">
+      <div class="w-16 h-16 rounded bg-step-record"></div>
+      <div class="w-16 h-16 rounded bg-step-autocut"></div>
+      <div class="w-16 h-16 rounded bg-step-autoclean"></div>
+    </div>
+    
+    <div class="card max-w-md">
+      <h3 class="mb-2">Card Test</h3>
+      <p>This is a test card to verify the design system is working.</p>
+    </div>
+  </main>
+</BaseLayout>
+```
+
+---
+
+## Acceptance Criteria
+
+- [ ] Tailwind config has all custom colors defined
+- [ ] Custom fonts (Space Grotesk, Inter) load correctly
+- [ ] Carbon texture background is visible (subtle)
+- [ ] `btn-primary` class styled correctly (red button)
+- [ ] `btn-secondary` class styled correctly (outlined button)
+- [ ] `card` class styled correctly (dark card with border)
+- [ ] `container-main` provides correct max-width and padding
+- [ ] Step colors (red, yellow, green) render correctly
+- [ ] Heading typography uses Space Grotesk
+- [ ] Body typography uses Inter
+- [ ] Reduced motion media query present
+
+---
+
+## Testing
+
+```bash
+npm run dev
+# Open http://localhost:4321
+# Verify:
+# - Dark background with subtle texture
+# - Red "Download Beta" button
+# - Outlined "Learn More" button
+# - Three colored squares (red, yellow, green)
+# - Card with dark background
+# - Headings look different from body text
+```

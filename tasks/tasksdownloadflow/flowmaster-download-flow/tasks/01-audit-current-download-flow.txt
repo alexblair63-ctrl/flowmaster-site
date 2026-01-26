@@ -1,0 +1,47 @@
+# Task 01: Audit Current Download Flow
+
+## Objective
+
+Examine the existing download flow implementation to understand what needs to be modified.
+
+## Context
+
+The website currently has a modal/dialog that appears when users click the download button. This modal captures email before allowing the download to proceed. We need to understand the current implementation before modifying it.
+
+## Steps
+
+1. Locate the download button component(s) on the site
+2. Find the modal/dialog component that appears on click
+3. Identify how the email field is currently implemented
+4. Understand how form submission triggers the download
+5. Note any existing validation logic
+6. Check if there's existing analytics/tracking integration
+7. Document the file paths and component structure
+
+## Deliverables
+
+Document the following:
+- File path(s) for download button component
+- File path(s) for modal/dialog component
+- Current form fields and validation
+- How download is triggered after form submission
+- Any existing analytics or data storage for email captures
+
+## Acceptance Criteria
+
+- [ ] Download button component located
+- [ ] Modal/dialog component located
+- [ ] Email capture logic understood
+- [ ] Download trigger mechanism understood
+- [ ] Existing analytics integration (if any) documented
+- [ ] Clear understanding of what files need modification
+
+## Likely File Locations
+
+- `src/pages/index.astro` or downloads page
+- `src/components/` directory for modal component
+- Look for terms like: Modal, Dialog, Download, Email, Form
+
+## Notes
+
+This is a read-only audit task. Do not modify files yet.

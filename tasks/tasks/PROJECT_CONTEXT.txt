@@ -1,0 +1,165 @@
+# Flowmaster Website - Project Context
+
+## Overview
+
+Marketing website for Flowmaster Suite, a video editing automation toolkit for content creators who record long gaming/streaming sessions.
+
+**Domain:** flowmastersuite.com
+**Framework:** Astro + Tailwind CSS
+**Deployment:** GitHub Pages (later)
+
+---
+
+## The Product
+
+Flowmaster solves the "pre-editing" problem: creators record 3-5 hour sessions and spend hours scrubbing through footage to find highlights. Flowmaster lets users press F9 during recording to mark moments, then automatically cuts footage to keep only the good parts.
+
+### Three-Step System
+1. **RECORD** - Press F9 during recording to mark highlight moments (Flowmaster Hotkey - Rust)
+2. **AUTOCUT** - Automatically cut footage based on timestamps (AutoCut - Python)  
+3. **AUTOCLEAN** - Safely delete original files after editing (AutoCleaner - Python)
+
+### Tagline
+"Edit as you record"
+
+### Business Model
+- Free during beta
+- Early adopters get 50% off first year when subscription launches
+- LemonSqueezy for licensing (may be replaced with custom backend)
+
+---
+
+## Brand Identity
+
+### Colors
+- Primary Background: #0a0a0a (near black)
+- Secondary Background: #141414
+- Tertiary/Borders: #1a1a1a
+- Brand Red: #c94a4a
+- Brand Red Bright: #e05555
+- Step 1 (Record): #c94a4a (red)
+- Step 2 (AutoCut): #d4a84a (yellow/gold)
+- Step 3 (AutoClean): #4ac94a (green)
+- Alenzie Accent: #55ffa2 (mint green, footer only)
+- Text: #ffffff, #f5f5f5, #d4d4d4, #737373
+
+### Typography
+- Headings: Space Grotesk (techy but professional)
+- Body: Inter
+- Weights: 400, 500, 600, 700
+
+### Visual Style
+- Dark theme (similar to OBS)
+- Subtle carbon fiber texture on background
+- Minimal, focused hero (reference: alenzie.com)
+- Animated 1-2-3 section with SVG graphics
+- Parallax effects on animated elements (subtle, ~3%)
+
+---
+
+## Site Structure
+
+### Pages
+1. **Home (index)** - Landing page with all sections
+2. **Features** - Detailed feature breakdown
+3. **Future** - Roadmap and "what we're building"
+4. **About** - Team and company info
+5. **Docs** - Documentation hub
+   - Getting Started
+   - OBS Setup Guide
+6. **Download** - Download page with email capture
+
+### Homepage Sections (in order)
+1. Hero (minimal, Alenzie-style)
+2. Three-Step Animation (Record/AutoCut/AutoClean)
+3. How It Works (detailed steps)
+4. Features Preview (links to /features)
+5. Future Features Preview (mockup image + roadmap)
+6. Testimonials (5-card carousel + video placeholder)
+7. Final CTA
+
+---
+
+## Key Interactions
+
+### Navigation Behavior
+- Navbar is INVISIBLE on page load
+- Fades in when user scrolls past hero section
+- Fixed position when visible with backdrop blur
+
+### Three-Step Animation Section
+- Desktop: Elements have idle float animation
+- Desktop: Hover triggers active animation loops
+- Desktop: Subtle parallax responds to mouse position (~3%)
+- Mobile: Auto-play when scrolled into view, loop 2-3 times
+- Entry: Columns stagger in one by one (1... 2... 3...)
+
+### Download Flow
+1. User clicks "Download Beta" on homepage
+2. Goes to /download page
+3. Clicks Windows download button
+4. Email capture modal/form appears
+5. User submits email
+6. Download link provided / auto-download starts
+
+---
+
+## Team
+
+**Alexander Blair** - CEO / Creative Lead
+- Founder & creator
+- Branding, marketing, front-end design
+- UCLA, UCSD, SDCCD
+
+**MacKenzie Drury** - CTO / Full-Stack Developer
+- Lead software developer, back-end architect
+- UCLA, Georgia Tech
+
+**Austin Lim** - Legal Strategy Advisor
+- Legal consultant, compliance and procedure
+- UCSC
+
+---
+
+## External Links
+
+- Discord: https://discord.gg/S8uJpcK3qJ
+- Email: support@flowmastersuite.com
+- LinkedIn: placeholder (not created yet)
+- YouTube: placeholder (not created yet)
+- Parent Company: alenzie.com
+
+---
+
+## Assets Required
+
+### From User (to be provided)
+- flowmaster-logo-vertical.png
+- flowmaster-logo-horizontal.png  
+- mockup-interface.png (Photoshop prototype)
+- Team photos (or use placeholders)
+- SVG sketches for animations (when ready)
+
+### To Be Created
+- Placeholder SVGs for 1-2-3 animation
+- Favicon
+- Social media icons
+- Feature icons
+
+---
+
+## Technical Requirements
+
+- Windows 10/11 only (for download)
+- Works with OBS Studio
+- OBS requirement mentioned but not emphasized
+- Advanced Scene Switcher plugin details saved for docs
+
+---
+
+## Content Notes
+
+- Assume user knows what OBS is
+- Don't be money-hungry in messaging - feel like public benefit
+- Beta is free, early adopters get 50% off first year
+- "An Alenzie product" in footer with mint green link

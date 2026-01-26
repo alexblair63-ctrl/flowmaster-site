@@ -1,0 +1,204 @@
+# Task 13: Polish & Responsive Testing
+
+## Goal
+Final polish, responsive testing, performance optimization, and deployment prep.
+
+---
+
+## 13.1 Responsive Testing Checklist
+
+Test at these breakpoints:
+- **Mobile:** 375px (iPhone SE)
+- **Mobile Large:** 428px (iPhone 14 Pro Max)
+- **Tablet:** 768px (iPad)
+- **Desktop:** 1024px
+- **Desktop Large:** 1440px
+
+### Per-Page Checklist
+
+**Homepage:**
+- [ ] Hero text scales appropriately
+- [ ] Three-step section stacks on mobile
+- [ ] How It Works grid adjusts
+- [ ] Feature cards wrap properly
+- [ ] Testimonial carousel works on touch
+- [ ] CTA section readable
+
+**Features Page:**
+- [ ] Feature cards 2-col on tablet, 1-col on mobile
+- [ ] Text doesn't overflow
+
+**Future Page:**
+- [ ] Mockup image scales
+- [ ] Roadmap cards stack on mobile
+
+**About Page:**
+- [ ] Team cards stack on mobile
+- [ ] Story text readable
+
+**Docs Pages:**
+- [ ] Sidebar collapses or moves to top on mobile
+- [ ] Code blocks scroll horizontally
+
+**Download Page:**
+- [ ] Platform cards stack on mobile
+- [ ] Modal fits on small screens
+- [ ] Form inputs are touch-friendly
+
+---
+
+## 13.2 Navigation Responsive
+
+- [ ] Hamburger menu appears at md breakpoint
+- [ ] Mobile menu opens/closes properly
+- [ ] All links work in mobile menu
+- [ ] Nav doesn't overlap content
+
+---
+
+## 13.3 Performance Checklist
+
+Run Lighthouse audit and address:
+
+- [ ] Images optimized (WebP, proper sizes)
+- [ ] Fonts preloaded
+- [ ] CSS purged of unused styles (Tailwind does this)
+- [ ] No render-blocking resources
+- [ ] Animations use transform/opacity only
+- [ ] Lazy load below-fold images
+
+Target scores:
+- Performance: >90
+- Accessibility: >90
+- Best Practices: >90
+- SEO: >90
+
+---
+
+## 13.4 Accessibility Checklist
+
+- [ ] All images have alt text
+- [ ] Color contrast meets WCAG AA
+- [ ] Focus states visible on interactive elements
+- [ ] Keyboard navigation works
+- [ ] Screen reader tested (basic)
+- [ ] Skip to content link (optional)
+- [ ] ARIA labels on icon buttons
+
+---
+
+## 13.5 Cross-Browser Testing
+
+Test on:
+- [ ] Chrome (primary)
+- [ ] Firefox
+- [ ] Safari
+- [ ] Edge
+
+Key things to check:
+- Backdrop blur support
+- CSS grid/flexbox
+- SVG animations
+- Form styling
+
+---
+
+## 13.6 Final Content Review
+
+- [ ] All placeholder text identified with comments
+- [ ] No "Lorem ipsum" visible
+- [ ] Links point to correct destinations
+- [ ] Email addresses correct
+- [ ] Social links work (or clearly marked placeholder)
+
+---
+
+## 13.7 Pre-Deployment Checklist
+
+- [ ] Build succeeds: `npm run build`
+- [ ] Preview works: `npm run preview`
+- [ ] No console errors
+- [ ] Favicon displays
+- [ ] Meta tags present (title, description)
+- [ ] OG tags for social sharing (optional)
+
+---
+
+## 13.8 GitHub Pages Deployment
+
+**astro.config.mjs:**
+```javascript
+import { defineConfig } from 'astro/config';
+import tailwind from '@astrojs/tailwind';
+
+export default defineConfig({
+  site: 'https://flowmastersuite.com',
+  integrations: [tailwind()],
+});
+```
+
+**GitHub Action (.github/workflows/deploy.yml):**
+```yaml
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@v4
+        id: deployment
+```
+
+---
+
+## Acceptance Criteria
+
+- [ ] Site works on all tested breakpoints
+- [ ] Mobile menu functional
+- [ ] Lighthouse scores >90 (or documented exceptions)
+- [ ] No accessibility errors
+- [ ] Works in Chrome, Firefox, Safari, Edge
+- [ ] Build succeeds without errors
+- [ ] Deployed to GitHub Pages (or ready to deploy)
+
+---
+
+## Testing Commands
+
+```bash
+# Build
+npm run build
+
+# Preview production build
+npm run preview
+
+# Check for TypeScript errors
+npx astro check
+```

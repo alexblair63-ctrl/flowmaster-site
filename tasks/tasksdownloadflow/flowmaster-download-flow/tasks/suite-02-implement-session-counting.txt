@@ -1,0 +1,104 @@
+# Suite Task 02: Implement Session Counting
+
+## Objective
+
+Add logic to count and persist how many times Flowmaster has been launched, enabling the trial gate after 3 sessions.
+
+## Context
+
+Users get 3 free sessions before being required to enter email and access key. A "session" is defined as each time the application is launched.
+
+## Requirements
+
+### Session Definition
+- Increment counter each time the main Flowmaster entry point is executed
+- Counter persists across application restarts
+- Counter should not reset on application updates (if possible)
+
+### Storage Location
+
+Based on Task 01 audit, store session count in an appropriate persistent location:
+- Config/settings file in user's app data directory
+- Simple JSON file
+- Registry (Windows)
+- SQLite database
+- Whatever pattern is already used in the codebase
+
+Recommended: JSON file in user's app data folder for simplicity and cross-platform potential.
+
+Example path: `%APPDATA%/Flowmaster/session_data.json` (Windows)
+
+### Data Structure
+
+```json
+{
+  "session_count": 3,
+  "first_launch": "2025-01-22T10:30:00Z",
+  "last_launch": "2025-01-22T14:45:00Z",
+  "access_key": null,
+  "email": null,
+  "is_activated": false
+}
+```
+
+## Implementation
+
+### Pseudocode
+
+```
+on_application_start():
+    session_data = load_session_data()
+    
+    if session_data is None:
+        session_data = create_default_session_data()
+    
+    session_data.session_count += 1
+    session_data.last_launch = now()
+    
+    save_session_data(session_data)
+    
+    if session_data.is_activated:
+        continue_to_application()
+    elif session_data.session_count > 3:
+        show_gate_ui()  # Task 03
+    else:
+        continue_to_application()
+```
+
+### Functions to Implement
+
+1. `get_session_data_path()` - Returns path to session data file
+2. `load_session_data()` - Reads and parses session data, returns None if not exists
+3. `save_session_data(data)` - Writes session data to file
+4. `create_default_session_data()` - Returns fresh session data object
+5. `increment_session()` - Main function called on launch
+
+## Acceptance Criteria
+
+- [ ] Session count increments on each application launch
+- [ ] Count persists after application closes
+- [ ] Count persists after system restart
+- [ ] Session data file is created in appropriate location
+- [ ] Data structure includes all fields for future use (email, key, activation status)
+- [ ] Code handles missing/corrupted session file gracefully
+- [ ] First 3 launches proceed without interruption
+- [ ] 4th launch triggers gate condition (integration with Task 03)
+
+## Testing
+
+1. Delete session data file, launch app → should create file with count = 1
+2. Launch again → count should be 2
+3. Launch again → count should be 3 (still no gate)
+4. Launch again → count should be 4 (gate should trigger)
+5. Manually edit file to set `is_activated: true` → should bypass gate regardless of count
+
+## Edge Cases
+
+- Session file doesn't exist → create new one
+- Session file is corrupted/invalid JSON → reset to defaults
+- Session file has missing fields → merge with defaults
+- No write permission to app data folder → log error, continue in trial mode (graceful degradation)
+
+## Notes
+
+The gate UI itself is implemented in Task 03. This task just handles the counting and condition checking.

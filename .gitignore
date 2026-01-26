@@ -1,9 +1,17 @@
-# Ignore everything
-*
+# dependencies
+node_modules/
 
-# Track website source files
-!.gitignore
-!src/
-!src/**
-!public/
-!public/**
+# build output
+dist/
+.astro/
+
+# environment
+.env
+.env.*
+
+# macOS
+.DS_Store
+
+# IDEs
+.vscode/
+.idea/

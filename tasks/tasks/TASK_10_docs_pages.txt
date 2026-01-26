@@ -1,0 +1,283 @@
+# Task 10: Docs Pages
+
+## Goal
+Create the documentation hub and OBS setup guide.
+
+---
+
+## 10.1 Docs Index Page
+
+**src/pages/docs/index.astro:**
+```astro
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const docs = [
+  {
+    title: 'Getting Started',
+    description: 'Quick start guide to get Flowmaster running',
+    href: '/docs',
+    current: true,
+  },
+  {
+    title: 'OBS Setup',
+    description: 'Configure OBS to work with Flowmaster',
+    href: '/docs/obs-setup',
+  },
+  {
+    title: 'Configuration',
+    description: 'Customize Flowmaster settings',
+    href: '#',
+    comingSoon: true,
+  },
+  {
+    title: 'Troubleshooting',
+    description: 'Common issues and solutions',
+    href: '#',
+    comingSoon: true,
+  },
+];
+---
+
+<BaseLayout title="Documentation">
+  <div class="section-padding pt-32">
+    <div class="container-main">
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        
+        <!-- Sidebar -->
+        <aside class="lg:col-span-1">
+          <h3 class="font-semibold mb-4">Documentation</h3>
+          <nav class="space-y-2">
+            {docs.map(doc => (
+              <a 
+                href={doc.comingSoon ? '#' : doc.href}
+                class={`block py-2 px-3 rounded-lg transition-colors ${
+                  doc.current 
+                    ? 'bg-brand-red/20 text-brand-red' 
+                    : doc.comingSoon 
+                      ? 'text-gray-600 cursor-not-allowed'
+                      : 'text-gray-400 hover:text-white hover:bg-bg-tertiary'
+                }`}
+              >
+                {doc.title}
+                {doc.comingSoon && <span class="text-xs ml-2">(soon)</span>}
+              </a>
+            ))}
+          </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="lg:col-span-3">
+          <h1 class="mb-4">Getting Started</h1>
+          <p class="text-xl text-gray-400 mb-8">Get Flowmaster running in 5 minutes</p>
+          
+          <div class="prose prose-invert max-w-none">
+            <h2 class="text-2xl font-semibold mb-4 mt-8">Quick Start</h2>
+            
+            <ol class="space-y-6 text-gray-300">
+              <li class="flex gap-4">
+                <span class="flex-shrink-0 w-8 h-8 rounded-full bg-brand-red/20 text-brand-red flex items-center justify-center font-bold">1</span>
+                <div>
+                  <strong class="text-white">Download and install Flowmaster</strong>
+                  <p class="text-gray-400 mt-1">Get the installer from the <a href="/download" class="text-brand-red hover:underline">download page</a>.</p>
+                </div>
+              </li>
+              
+              <li class="flex gap-4">
+                <span class="flex-shrink-0 w-8 h-8 rounded-full bg-brand-red/20 text-brand-red flex items-center justify-center font-bold">2</span>
+                <div>
+                  <strong class="text-white">Set up OBS integration</strong>
+                  <p class="text-gray-400 mt-1">Follow the <a href="/docs/obs-setup" class="text-brand-red hover:underline">OBS setup guide</a> to connect Flowmaster with OBS.</p>
+                </div>
+              </li>
+              
+              <li class="flex gap-4">
+                <span class="flex-shrink-0 w-8 h-8 rounded-full bg-brand-red/20 text-brand-red flex items-center justify-center font-bold">3</span>
+                <div>
+                  <strong class="text-white">Configure your output folder</strong>
+                  <p class="text-gray-400 mt-1">Tell Flowmaster where your OBS recordings are saved.</p>
+                </div>
+              </li>
+              
+              <li class="flex gap-4">
+                <span class="flex-shrink-0 w-8 h-8 rounded-full bg-brand-red/20 text-brand-red flex items-center justify-center font-bold">4</span>
+                <div>
+                  <strong class="text-white">Start recording and press F9</strong>
+                  <p class="text-gray-400 mt-1">Hit F9 whenever something highlight-worthy happens.</p>
+                </div>
+              </li>
+              
+              <li class="flex gap-4">
+                <span class="flex-shrink-0 w-8 h-8 rounded-full bg-brand-red/20 text-brand-red flex items-center justify-center font-bold">5</span>
+                <div>
+                  <strong class="text-white">Run AutoCut</strong>
+                  <p class="text-gray-400 mt-1">Process your footage with one click.</p>
+                </div>
+              </li>
+              
+              <li class="flex gap-4">
+                <span class="flex-shrink-0 w-8 h-8 rounded-full bg-brand-red/20 text-brand-red flex items-center justify-center font-bold">6</span>
+                <div>
+                  <strong class="text-white">Clean up with AutoCleaner</strong>
+                  <p class="text-gray-400 mt-1">Free up space by removing processed originals.</p>
+                </div>
+              </li>
+            </ol>
+          </div>
+        </main>
+        
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+```
+
+---
+
+## 10.2 OBS Setup Page
+
+**src/pages/docs/obs-setup.astro:**
+```astro
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const docs = [
+  { title: 'Getting Started', href: '/docs' },
+  { title: 'OBS Setup', href: '/docs/obs-setup', current: true },
+  { title: 'Configuration', href: '#', comingSoon: true },
+  { title: 'Troubleshooting', href: '#', comingSoon: true },
+];
+---
+
+<BaseLayout title="OBS Setup">
+  <div class="section-padding pt-32">
+    <div class="container-main">
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        
+        <!-- Sidebar (same as index) -->
+        <aside class="lg:col-span-1">
+          <h3 class="font-semibold mb-4">Documentation</h3>
+          <nav class="space-y-2">
+            {docs.map(doc => (
+              <a 
+                href={doc.comingSoon ? '#' : doc.href}
+                class={`block py-2 px-3 rounded-lg transition-colors ${
+                  doc.current 
+                    ? 'bg-brand-red/20 text-brand-red' 
+                    : doc.comingSoon 
+                      ? 'text-gray-600 cursor-not-allowed'
+                      : 'text-gray-400 hover:text-white hover:bg-bg-tertiary'
+                }`}
+              >
+                {doc.title}
+                {doc.comingSoon && <span class="text-xs ml-2">(soon)</span>}
+              </a>
+            ))}
+          </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="lg:col-span-3">
+          <h1 class="mb-4">OBS Setup Guide</h1>
+          <p class="text-xl text-gray-400 mb-8">Configure OBS to work with Flowmaster</p>
+          
+          <div class="space-y-8 text-gray-300">
+            
+            <!-- Step 1 -->
+            <section>
+              <h2 class="text-2xl font-semibold mb-4">1. Install Advanced Scene Switcher</h2>
+              <p class="mb-4">
+                Flowmaster uses the Advanced Scene Switcher plugin to automatically start and stop when you record.
+              </p>
+              <a 
+                href="https://obsproject.com/forum/resources/advanced-scene-switcher.395/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 text-brand-red hover:underline"
+              >
+                Download Advanced Scene Switcher →
+              </a>
+              
+              <!-- Screenshot placeholder -->
+              <div class="mt-4 aspect-video max-w-lg bg-bg-secondary rounded-lg border border-bg-tertiary flex items-center justify-center">
+                <span class="text-gray-600">Screenshot: OBS plugin manager</span>
+              </div>
+            </section>
+            
+            <!-- Step 2 -->
+            <section>
+              <h2 class="text-2xl font-semibold mb-4">2. Create Start Recording Macro</h2>
+              <p class="mb-4">Open Advanced Scene Switcher and create a new macro:</p>
+              
+              <div class="bg-bg-secondary rounded-lg p-4 font-mono text-sm mb-4">
+                <p><span class="text-gray-500">Condition:</span> Recording → Started</p>
+                <p><span class="text-gray-500">Action:</span> Run → flowmaster-start.exe</p>
+              </div>
+              
+              <!-- Screenshot placeholder -->
+              <div class="aspect-video max-w-lg bg-bg-secondary rounded-lg border border-bg-tertiary flex items-center justify-center">
+                <span class="text-gray-600">Screenshot: Start macro config</span>
+              </div>
+            </section>
+            
+            <!-- Step 3 -->
+            <section>
+              <h2 class="text-2xl font-semibold mb-4">3. Create Stop Recording Macro</h2>
+              <p class="mb-4">Create another macro for stopping:</p>
+              
+              <div class="bg-bg-secondary rounded-lg p-4 font-mono text-sm mb-4">
+                <p><span class="text-gray-500">Condition:</span> Recording → Stopped</p>
+                <p><span class="text-gray-500">Action:</span> Run → flowmaster-stop.exe</p>
+              </div>
+              
+              <!-- Screenshot placeholder -->
+              <div class="aspect-video max-w-lg bg-bg-secondary rounded-lg border border-bg-tertiary flex items-center justify-center">
+                <span class="text-gray-600">Screenshot: Stop macro config</span>
+              </div>
+            </section>
+            
+            <!-- Step 4 -->
+            <section>
+              <h2 class="text-2xl font-semibold mb-4">4. Test Your Setup</h2>
+              <ol class="list-decimal list-inside space-y-2">
+                <li>Start a test recording in OBS</li>
+                <li>Press F9 a few times</li>
+                <li>Stop the recording</li>
+                <li>Check your recordings folder for a .txt timestamp file</li>
+              </ol>
+              <p class="mt-4 text-gray-400">
+                If you see a timestamp file, you're all set!
+              </p>
+            </section>
+            
+          </div>
+        </main>
+        
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+```
+
+---
+
+## Acceptance Criteria
+
+- [ ] /docs shows getting started guide with sidebar
+- [ ] Sidebar navigation highlights current page
+- [ ] "Coming soon" items are grayed out
+- [ ] Getting started has 6 numbered steps
+- [ ] /docs/obs-setup has 4 setup steps
+- [ ] Screenshot placeholders present
+- [ ] Links between docs pages work
+
+---
+
+## Testing
+
+```bash
+npm run dev
+# Navigate to http://localhost:4321/docs
+# Click OBS Setup in sidebar
+# Verify both pages render correctly
+```

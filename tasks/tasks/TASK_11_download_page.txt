@@ -1,0 +1,311 @@
+# Task 11: Download Page
+
+## Goal
+Create the download page with email capture flow before download.
+
+---
+
+## 11.1 Download Page
+
+**src/pages/download.astro:**
+```astro
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Button from '../components/Button.astro';
+---
+
+<BaseLayout title="Download">
+  <div class="section-padding pt-32">
+    <div class="container-main">
+      
+      <!-- Hero -->
+      <div class="text-center mb-16">
+        <h1 class="mb-4">Download Flowmaster</h1>
+        <p class="text-xl text-gray-400">Start editing smarter today</p>
+      </div>
+      
+      <!-- Download Options -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-16">
+        
+        <!-- Windows - Active -->
+        <div class="card text-center border-brand-red/30">
+          <div class="text-4xl mb-4">🪟</div>
+          <h3 class="text-xl font-semibold mb-2">Windows</h3>
+          <p class="text-gray-400 text-sm mb-4">Windows 10/11</p>
+          <p class="text-gray-600 text-xs mb-4">Beta v0.1.0 • ~50 MB</p>
+          <button 
+            id="windows-download-btn"
+            class="btn-primary w-full"
+          >
+            Download for Windows
+          </button>
+        </div>
+        
+        <!-- macOS - Coming Soon -->
+        <div class="card text-center opacity-60">
+          <div class="text-4xl mb-4">🍎</div>
+          <h3 class="text-xl font-semibold mb-2">macOS</h3>
+          <p class="text-gray-400 text-sm mb-4">Coming Soon</p>
+          <p class="text-gray-600 text-xs mb-4">&nbsp;</p>
+          <button class="btn-secondary w-full opacity-50 cursor-not-allowed" disabled>
+            Coming Soon
+          </button>
+        </div>
+        
+        <!-- Linux - Coming Soon -->
+        <div class="card text-center opacity-60">
+          <div class="text-4xl mb-4">🐧</div>
+          <h3 class="text-xl font-semibold mb-2">Linux</h3>
+          <p class="text-gray-400 text-sm mb-4">Coming Soon</p>
+          <p class="text-gray-600 text-xs mb-4">&nbsp;</p>
+          <button class="btn-secondary w-full opacity-50 cursor-not-allowed" disabled>
+            Coming Soon
+          </button>
+        </div>
+        
+      </div>
+      
+      <!-- Beta Info -->
+      <div class="max-w-2xl mx-auto text-center mb-16">
+        <div class="card bg-brand-red/5 border-brand-red/20">
+          <h3 class="text-lg font-semibold mb-2">🎉 Beta is Free!</h3>
+          <p class="text-gray-400">
+            Flowmaster is free during beta. Early adopters will receive 
+            <span class="text-brand-red font-semibold">50% off their first year</span> 
+            when we launch the full version.
+          </p>
+        </div>
+      </div>
+      
+      <!-- Requirements -->
+      <div class="max-w-2xl mx-auto">
+        <h2 class="text-center mb-6">System Requirements</h2>
+        <div class="card">
+          <ul class="space-y-3 text-gray-300">
+            <li class="flex items-center gap-3">
+              <span class="text-brand-red">✓</span>
+              Windows 10 or Windows 11
+            </li>
+            <li class="flex items-center gap-3">
+              <span class="text-brand-red">✓</span>
+              OBS Studio (recommended)
+            </li>
+            <li class="flex items-center gap-3">
+              <span class="text-brand-red">✓</span>
+              FFmpeg (bundled with installer)
+            </li>
+            <li class="flex items-center gap-3">
+              <span class="text-brand-red">✓</span>
+              ~100 MB disk space
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  
+  <!-- Email Capture Modal -->
+  <div 
+    id="email-modal" 
+    class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4"
+  >
+    <div class="card max-w-md w-full relative">
+      <!-- Close button -->
+      <button 
+        id="modal-close"
+        class="absolute top-4 right-4 text-gray-400 hover:text-white"
+        aria-label="Close"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+      
+      <!-- Form state: input -->
+      <div id="form-input">
+        <h3 class="text-2xl font-semibold mb-2">Almost there!</h3>
+        <p class="text-gray-400 mb-6">Enter your email to download Flowmaster.</p>
+        
+        <form id="download-form" class="space-y-4">
+          <div>
+            <label for="email" class="block text-sm font-medium mb-2">Email *</label>
+            <input 
+              type="email" 
+              id="email" 
+              name="email"
+              required
+              class="w-full bg-bg-tertiary border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-red"
+              placeholder="you@example.com"
+            />
+          </div>
+          
+          <div>
+            <label for="name" class="block text-sm font-medium mb-2">Name (optional)</label>
+            <input 
+              type="text" 
+              id="name" 
+              name="name"
+              class="w-full bg-bg-tertiary border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-red"
+              placeholder="Your name"
+            />
+          </div>
+          
+          <div>
+            <label for="source" class="block text-sm font-medium mb-2">How did you hear about us?</label>
+            <select 
+              id="source" 
+              name="source"
+              class="w-full bg-bg-tertiary border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-red"
+            >
+              <option value="">Select an option</option>
+              <option value="youtube">YouTube</option>
+              <option value="twitter">Twitter/X</option>
+              <option value="discord">Discord</option>
+              <option value="reddit">Reddit</option>
+              <option value="friend">Friend</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          
+          <button type="submit" class="btn-primary w-full">
+            Get Download Link
+          </button>
+        </form>
+      </div>
+      
+      <!-- Form state: success -->
+      <div id="form-success" class="hidden text-center">
+        <div class="text-5xl mb-4">🎉</div>
+        <h3 class="text-2xl font-semibold mb-2">You're in!</h3>
+        <p class="text-gray-400 mb-6">Your download should start automatically.</p>
+        
+        <a 
+          href="#" 
+          id="manual-download-link"
+          class="text-brand-red hover:underline block mb-4"
+        >
+          Click here if download doesn't start
+        </a>
+        
+        <p class="text-sm text-gray-500">
+          Check your email for setup instructions and your license key.
+        </p>
+      </div>
+      
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  const modal = document.getElementById('email-modal');
+  const downloadBtn = document.getElementById('windows-download-btn');
+  const closeBtn = document.getElementById('modal-close');
+  const form = document.getElementById('download-form');
+  const formInput = document.getElementById('form-input');
+  const formSuccess = document.getElementById('form-success');
+  
+  // Open modal
+  downloadBtn?.addEventListener('click', () => {
+    modal?.classList.remove('hidden');
+    modal?.classList.add('flex');
+  });
+  
+  // Close modal
+  closeBtn?.addEventListener('click', () => {
+    modal?.classList.add('hidden');
+    modal?.classList.remove('flex');
+  });
+  
+  // Close on backdrop click
+  modal?.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+  });
+  
+  // Close on Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      modal?.classList.add('hidden');
+      modal?.classList.remove('flex');
+    }
+  });
+  
+  // Form submission
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData(form as HTMLFormElement);
+    const data = {
+      email: formData.get('email'),
+      name: formData.get('name'),
+      source: formData.get('source'),
+    };
+    
+    // TODO: Send to backend/Formspree/etc
+    console.log('Form submitted:', data);
+    
+    // For now, just show success state
+    formInput?.classList.add('hidden');
+    formSuccess?.classList.remove('hidden');
+    
+    // TODO: Trigger actual download
+    // window.location.href = '/downloads/flowmaster-setup.exe';
+  });
+</script>
+```
+
+---
+
+## 11.2 Form Backend Options
+
+For actual email capture, choose one:
+
+**Option A: Formspree (easiest)**
+```html
+<form action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+```
+
+**Option B: Custom API**
+```javascript
+await fetch('/api/download-signup', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(data),
+});
+```
+
+**Option C: Store locally (dev only)**
+For now, just console.log and move on.
+
+---
+
+## Acceptance Criteria
+
+- [ ] Download page shows 3 platform cards
+- [ ] Windows card is active with download button
+- [ ] macOS and Linux cards are grayed out with "Coming Soon"
+- [ ] Beta info box highlights 50% discount
+- [ ] System requirements listed
+- [ ] Clicking Windows download opens email modal
+- [ ] Modal has email (required), name (optional), source (optional) fields
+- [ ] Form submission shows success state
+- [ ] Modal closes on X, backdrop click, or Escape
+- [ ] Page accessible at /download
+
+---
+
+## Testing
+
+```bash
+npm run dev
+# Navigate to http://localhost:4321/download
+# Click "Download for Windows"
+# Modal should appear
+# Fill in email, submit
+# Success state should show
+# Check console for form data
+# Close modal with X, backdrop, or Escape
+```

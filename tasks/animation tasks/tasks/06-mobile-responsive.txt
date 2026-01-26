@@ -1,0 +1,112 @@
+# Task 06: Mobile Responsive Layout
+
+## Objective
+
+Implement the mobile layout where the animated logo appears above the text content in a single stacked column.
+
+## Context
+
+On mobile devices:
+- Layout switches from two-column to single-column
+- Logo appears at top, text content below
+- Mouse parallax is disabled (handled in Task 05)
+- Breathing animation continues
+- Intro animation plays the same as desktop
+
+Reference: `LogoAssets/Other/intended mobile look.jpg`
+
+## Layout Specification
+
+```
+Mobile (<768px):
+┌─────────────────────┐
+│                     │
+│   [Animated Logo]   │
+│                     │
+│      ▪ ▪ ▪         │
+│    Flowmaster       │
+│    LIVE STUDIO      │
+│                     │
+├─────────────────────┤
+│                     │
+│  Edit as you record │
+│                     │
+│  Description text   │
+│  goes here...       │
+│                     │
+│  [Download] [How]   │
+│                     │
+└─────────────────────┘
+```
+
+## Steps
+
+1. Add media query for mobile breakpoint (<768px)
+2. Switch grid to single column layout
+3. Reorder elements: logo first, text second (may need CSS order or HTML restructure)
+4. Center-align text content on mobile
+5. Adjust logo sizing for mobile viewport
+6. Ensure adequate spacing between logo and text
+7. Test intro animation on mobile viewport
+
+## CSS Approach
+
+```css
+/* Mobile-first or override */
+@media (max-width: 767px) {
+  .hero-container {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  
+  .hero-logo {
+    order: -1; /* Move logo above text if needed */
+    margin-bottom: 2rem;
+  }
+  
+  .hero-text {
+    text-align: center;
+  }
+  
+  /* Adjust logo size for mobile */
+  .logo-animation-container {
+    max-width: 280px; /* or appropriate size */
+    margin: 0 auto;
+  }
+  
+  /* Center buttons */
+  .hero-buttons {
+    justify-content: center;
+  }
+}
+```
+
+## Acceptance Criteria
+
+- [ ] Single column layout on screens <768px
+- [ ] Logo appears above text content
+- [ ] Text content is centered on mobile
+- [ ] Logo is appropriately sized (not too large or small)
+- [ ] Adequate spacing between logo and text sections
+- [ ] Intro animation plays correctly on mobile
+- [ ] Breathing animation works on mobile
+- [ ] No horizontal scrolling or overflow
+- [ ] Buttons are properly aligned/centered
+- [ ] Visual appearance matches `intended mobile look.jpg` mockup
+- [ ] Smooth transition if resizing viewport across breakpoint
+
+## Testing
+
+- Test on actual mobile device if possible
+- Use browser dev tools responsive mode
+- Check iPhone SE (small), iPhone 14 (medium), and tablet sizes
+- Verify touch interactions don't trigger parallax
+- Test both portrait and landscape orientations
+- Ensure animation timing feels right on mobile
+
+## Notes
+
+- The logo might need different sizing on mobile vs desktop
+- Consider using CSS clamp() or viewport units for fluid sizing
+- Ensure tap targets (buttons) remain accessible size
+- Watch for any text that becomes too small on mobile

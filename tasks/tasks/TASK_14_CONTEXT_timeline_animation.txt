@@ -1,0 +1,176 @@
+# Timeline Animation - Feature Context
+
+## Overview
+
+An animated motion graphic demonstrating how Flowmaster's range-marking system works. This replaces static explanation with a visual demonstration showing the F9 key creating ranges on a moving timeline.
+
+**Location:** Top of Features page (no section title)
+**Duration:** 14 seconds, loops continuously
+**Style:** Same parallax behavior as three-step section
+
+---
+
+## Core Concept
+
+The animation shows a video timeline scrolling left (simulating recording in progress), with a playhead and the F9 key creating "keep ranges" that mark footage to save. The sequence demonstrates:
+
+1. Basic recording (timeline moving)
+2. Single F9 press creating a range
+3. Multiple F9 presses over time
+4. Overlapping F9 presses merging into a "smart range"
+
+---
+
+## Color Palette
+
+| Element | Color | Hex |
+|---------|-------|-----|
+| Timeline body | Very dark gray | #1a1a1a |
+| Timeline ticks | Light gray | #404040 |
+| Playhead | Flowmaster Red | #c94a4a |
+| Ranges | Flowmaster Yellow | #d4a84a |
+| Combined Range | Flowmaster Green | #4ac94a |
+| Checkmark | Flowmaster Green | #4ac94a |
+
+---
+
+## Assets Required (5 SVG Elements)
+
+### 1. Timeline
+- Horizontal rectangular bar, dark body (#1a1a1a)
+- Light tick marks at regular intervals (#404040)
+- Scrolls continuously right-to-left
+- Fades to transparency at left and right edges
+- Scales with zoom transitions
+
+### 2. Playhead
+- Vertical line with triangle/arrow on top
+- Red (#c94a4a)
+- Mostly stationary (centered or at 3/4 position depending on view)
+- Subtle wobble/float between views
+- Represents "now" in the recording
+
+### 3. F9 Key (3-part assembly)
+- **Keycap top:** The key surface with "F9" label
+- **Holster/base:** The socket the key clicks into
+- **Arrow:** Downward arrow showing press action
+- Animation: Arrow pushes keycap down into holster (click action, not bounce)
+- Appears near playhead when triggered
+- Yellow (#d4a84a) accent color
+
+### 4. Range Bar
+- Rectangular bar, yellow (#d4a84a)
+- Spawns above timeline, then drops down to "ride" it
+- Travels left with the timeline (attached to timeline position)
+- Represents ~30 seconds of footage to keep
+- Multiple ranges can exist at staggered vertical heights
+
+### 5. Combined Range
+- Longer rectangular bar, green (#4ac94a)
+- Replaces multiple overlapping ranges when they merge
+- Checkmark traces end-to-end after merge completes
+- Shows "smart range" result
+
+---
+
+## Animation Sequence (14 seconds)
+
+### View 0: Fade In (0-1s)
+- Everything fades in from transparency
+- Timeline already scrolling
+
+### View 1: Establishing Shot (1-3s)
+- **Zoom:** Close
+- **Playhead:** Centered in view
+- **Action:** Timeline scrolls smoothly, playhead wobbles subtly
+- **Purpose:** Show recording in progress
+
+### View 2: First Range (3-5s)
+- **Zoom:** Medium (zoom out from View 1)
+- **Playhead:** Moves to 3/4 - 4/5 position during zoom
+- **Action:** 
+  - F9 key appears and clicks down
+  - Yellow range pops in above timeline
+  - Range drops down to ride the timeline
+  - Range begins traveling left with timeline
+- **Purpose:** Show basic F9 functionality
+
+### View 3: Second Range (5-8s)
+- **Zoom:** Wide (3x out from View 2)
+- **Playhead:** Stationary at new position
+- **Action:**
+  - First range continues traveling left
+  - Another F9 press
+  - Second range spawns and drops onto timeline
+  - Both ranges now traveling
+- **Purpose:** Show ranges are independent, saved as recording continues
+
+### View 4: Overlapping Presses (8-11s)
+- **Zoom:** Wide (same as View 3)
+- **Playhead:** Stationary, subtle wobble
+- **Action:**
+  - 3 rapid F9 presses in succession
+  - 3 ranges spawn at staggered vertical heights (not overlapping visually)
+  - All 3 drop to different heights above timeline
+  - Ride along for ~1.5 seconds
+- **Purpose:** Show multiple rapid presses creating overlapping ranges
+
+### View 5: Smart Merge (11-13s)
+- **Zoom:** Wide (same)
+- **Action:**
+  - 3 yellow ranges drop down together
+  - Merge/concatenate into single green combined range
+  - Green checkmark traces end-to-end across combined range
+- **Purpose:** Show smart range merging overlapping clips
+
+### View 6: Fade Out (13-14s)
+- Everything fades to transparency
+- Loop restarts at View 0
+
+---
+
+## Technical Behavior
+
+### Parallax
+- Same mouse-following parallax as three-step section (~3% movement)
+- Subtle depth effect on hover
+
+### Responsive
+- Desktop: Full animation with parallax
+- Mobile: Auto-plays when scrolled into view, loops
+
+### Reduced Motion
+- Respect prefers-reduced-motion
+- Show static frame or simplified version
+
+### Looping
+- Seamless loop from fade-out back to fade-in
+- No pause between loops
+
+---
+
+## Implementation Notes
+
+- This is a complex choreographed animation
+- Consider using CSS keyframes with animation-delay for sequencing
+- Timeline scroll is continuous (translateX animation)
+- Zoom transitions use CSS scale transform
+- Range positions are relative to timeline (move with it)
+- F9 key can be absolutely positioned, appears on cue
+
+---
+
+## Success Criteria
+
+- [ ] Animation plays smoothly at 60fps
+- [ ] All 5 assets render correctly
+- [ ] Colors match Flowmaster palette
+- [ ] F9 key clicks (not bounces)
+- [ ] Ranges spawn above then drop to timeline
+- [ ] Ranges travel with timeline
+- [ ] Merge animation shows 3 yellow → 1 green
+- [ ] Checkmark traces on combined range
+- [ ] 14-second loop with fade in/out
+- [ ] Parallax works on desktop
+- [ ] Auto-plays on mobile scroll
+- [ ] Respects reduced motion preference

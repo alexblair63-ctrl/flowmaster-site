@@ -1,0 +1,75 @@
+# Task 04: Testing and Cleanup
+
+## Objective
+
+Verify the new download flow works correctly and clean up any remnants of the old email capture system.
+
+## Testing Checklist
+
+### Modal Behavior
+- [ ] Clicking download button opens modal
+- [ ] Modal displays "How did you hear about us?" dropdown
+- [ ] All 6 options are present and selectable
+- [ ] Placeholder text shows when nothing selected
+- [ ] Modal can be closed without selecting (X button or backdrop click)
+- [ ] Re-opening modal resets dropdown to placeholder state
+
+### Validation
+- [ ] Download button is disabled with no selection
+- [ ] Download button is disabled when placeholder is showing
+- [ ] Download button enables immediately when valid option selected
+- [ ] Changing selection keeps button enabled
+
+### Download Trigger
+- [ ] Selecting option + clicking download initiates file download
+- [ ] Correct file downloads (check filename, file size)
+- [ ] Modal closes after download starts
+- [ ] Attribution data is captured (check storage/analytics)
+
+### Edge Cases
+- [ ] Rapid clicking doesn't cause multiple downloads
+- [ ] Works on mobile viewport
+- [ ] Works with keyboard navigation (tab, enter, escape)
+- [ ] Works in Chrome, Firefox, Safari
+
+### Cleanup Verification
+- [ ] No email input field anywhere in download flow
+- [ ] No references to email capture in modal component
+- [ ] No orphaned email validation logic
+- [ ] No console errors or warnings
+- [ ] No TypeScript/linting errors if applicable
+
+## Cleanup Tasks
+
+1. Remove any commented-out email code (don't leave dead code)
+2. Remove unused imports related to email handling
+3. Remove any email-related CSS classes if no longer used
+4. Update any comments that reference the old email flow
+5. Remove email-related environment variables if applicable
+
+## Documentation
+
+Update any relevant documentation:
+- [ ] README if it mentions the download flow
+- [ ] Component documentation/comments
+- [ ] Any user-facing help text that referenced email
+
+## Acceptance Criteria
+
+- [ ] All testing checklist items pass
+- [ ] No remnants of old email capture system
+- [ ] Code is clean with no dead code or unused imports
+- [ ] Download flow works end-to-end on desktop and mobile
+- [ ] Attribution tracking confirmed working
+
+## Final Verification
+
+Perform a complete walkthrough:
+1. Load the page fresh
+2. Click download
+3. Verify modal appears with dropdown
+4. Select "YouTube" 
+5. Click download
+6. Confirm file downloads
+7. Check that attribution was tracked
+8. Repeat with "Other" option to verify all options work

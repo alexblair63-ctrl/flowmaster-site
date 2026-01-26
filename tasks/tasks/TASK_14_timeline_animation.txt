@@ -1,0 +1,346 @@
+# Task 14: Timeline Range Animation
+
+## Goal
+Create an animated demonstration of Flowmaster's range-marking system for the Features page.
+
+**Prerequisites:** Read TASK_14_CONTEXT_timeline_animation.txt first for full specification.
+
+---
+
+## 14.1 Create Component File
+
+**File:** `src/components/TimelineAnimation.astro`
+
+This will be a self-contained component with:
+- SVG elements for all assets
+- Scoped CSS for animations
+- JavaScript for parallax and scroll-trigger
+
+---
+
+## 14.2 Asset Creation
+
+Create 5 SVG asset groups within the component:
+
+### Asset 1: Timeline
+```
+- Dark rectangle (#1a1a1a) as base
+- Tick marks (#404040) at regular intervals
+- Mask/gradient at edges for fade effect
+- Animates: translateX (continuous scroll right-to-left)
+- Animates: scale (zoom transitions)
+```
+
+### Asset 2: Playhead
+```
+- Vertical line (#c94a4a)
+- Triangle pointer on top
+- Animates: subtle wobble (translateX ±2px)
+- Animates: position shift for zoom transitions
+```
+
+### Asset 3: F9 Key (3 parts)
+```
+- Keycap: rounded rectangle with "F9" text
+- Holster: slightly larger rectangle (the socket)
+- Arrow: downward chevron/arrow
+- Color accents: #d4a84a (yellow)
+- Animates: arrow pushes keycap into holster
+- Appears/disappears at trigger points
+```
+
+### Asset 4: Range Bar
+```
+- Rectangle, yellow (#d4a84a)
+- Rounded corners (small radius)
+- Animates: opacity 0→1 (spawn)
+- Animates: translateY (drop from above to timeline)
+- Animates: translateX (travels with timeline)
+- Multiple instances with staggered heights
+```
+
+### Asset 5: Combined Range
+```
+- Longer rectangle, green (#4ac94a)
+- Same style as range bar
+- Checkmark SVG path that traces in
+- Animates: replaces yellow ranges
+- Animates: checkmark stroke-dashoffset (draw effect)
+```
+
+---
+
+## 14.3 Animation Keyframes
+
+Define keyframe sequences for each view:
+
+```css
+/* Master timeline - 14 seconds total */
+@keyframes master-sequence {
+  0% { /* View 0: Fade in */ }
+  7.14% { /* View 1 start: 1s */ }
+  21.43% { /* View 2 start: 3s */ }
+  35.71% { /* View 3 start: 5s */ }
+  57.14% { /* View 4 start: 8s */ }
+  78.57% { /* View 5 start: 11s */ }
+  92.86% { /* View 6 start: 13s */ }
+  100% { /* Loop */ }
+}
+
+/* Timeline scroll - continuous */
+@keyframes timeline-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+
+/* Fade in/out */
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
+
+/* Playhead wobble */
+@keyframes wobble {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(3px); }
+}
+
+/* F9 key press */
+@keyframes key-press {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
+  100% { transform: translateY(0); }
+}
+
+/* Range spawn and drop */
+@keyframes range-spawn {
+  0% { opacity: 0; transform: translateY(-20px); }
+  30% { opacity: 1; transform: translateY(-20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Ranges merge down */
+@keyframes ranges-merge {
+  0% { transform: translateY(var(--stagger-height)); }
+  100% { transform: translateY(0); }
+}
+
+/* Checkmark trace */
+@keyframes checkmark-trace {
+  from { stroke-dashoffset: 100; }
+  to { stroke-dashoffset: 0; }
+}
+
+/* Zoom levels */
+@keyframes zoom-sequence {
+  0%, 7% { transform: scale(1); }           /* Close */
+  21%, 35% { transform: scale(0.7); }       /* Medium */
+  36%, 93% { transform: scale(0.4); }       /* Wide */
+  100% { transform: scale(0.4); }
+}
+```
+
+---
+
+## 14.4 Animation Orchestration
+
+Use CSS custom properties and animation-delay to choreograph:
+
+```css
+.timeline-container {
+  --duration: 14s;
+  animation: master-sequence var(--duration) linear infinite;
+}
+
+.f9-key-1 { animation-delay: 3.5s; }  /* View 2 */
+.f9-key-2 { animation-delay: 6s; }    /* View 3 */
+.f9-key-3 { animation-delay: 8.5s; }  /* View 4 - first of rapid */
+.f9-key-4 { animation-delay: 9s; }    /* View 4 - second */
+.f9-key-5 { animation-delay: 9.5s; }  /* View 4 - third */
+
+.range-1 { animation-delay: 3.7s; }
+.range-2 { animation-delay: 6.2s; }
+.range-3 { animation-delay: 8.7s; --stagger-height: -30px; }
+.range-4 { animation-delay: 9.2s; --stagger-height: -50px; }
+.range-5 { animation-delay: 9.7s; --stagger-height: -70px; }
+
+.combined-range { animation-delay: 11s; }
+.checkmark { animation-delay: 11.5s; }
+```
+
+---
+
+## 14.5 Parallax Integration
+
+Add same parallax behavior as three-step section:
+
+```javascript
+// Desktop only
+if (window.matchMedia('(min-width: 768px)').matches) {
+  const container = document.querySelector('.timeline-animation');
+  
+  document.addEventListener('mousemove', (e) => {
+    const x = (e.clientX / window.innerWidth - 0.5) * 2;
+    const y = (e.clientY / window.innerHeight - 0.5) * 2;
+    
+    const moveX = x * 0.03 * 100;
+    const moveY = y * 0.03 * 100;
+    
+    container.style.transform = `translate(${moveX}px, ${moveY}px)`;
+  });
+}
+```
+
+---
+
+## 14.6 Mobile Scroll Trigger
+
+```javascript
+// Mobile: play when in view
+if (window.matchMedia('(max-width: 767px)').matches) {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach(entry => {
+        const animation = entry.target.querySelector('.timeline-container');
+        if (entry.isIntersecting) {
+          animation.style.animationPlayState = 'running';
+        } else {
+          animation.style.animationPlayState = 'paused';
+        }
+      });
+    },
+    { threshold: 0.3 }
+  );
+  
+  observer.observe(document.querySelector('.timeline-animation'));
+}
+```
+
+---
+
+## 14.7 Reduced Motion Support
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  .timeline-container,
+  .timeline-container * {
+    animation: none !important;
+  }
+  
+  /* Show static "result" frame instead */
+  .combined-range { opacity: 1; }
+  .checkmark { stroke-dashoffset: 0; }
+}
+```
+
+---
+
+## 14.8 Integrate into Features Page
+
+**File:** `src/pages/features.astro`
+
+Add TimelineAnimation component at top, before hero:
+
+```astro
+---
+import TimelineAnimation from '../components/TimelineAnimation.astro';
+// ... other imports
+---
+
+<BaseLayout title="Features">
+  <!-- Timeline animation - no title, full width -->
+  <section class="py-12 overflow-hidden">
+    <div class="container-main">
+      <TimelineAnimation />
+    </div>
+  </section>
+  
+  <!-- Existing hero section -->
+  <section class="section-padding pt-16">
+    ...
+  </section>
+</BaseLayout>
+```
+
+---
+
+## Acceptance Criteria
+
+### Assets
+- [ ] Timeline renders as dark bar with tick marks
+- [ ] Timeline fades at edges (gradient mask)
+- [ ] Playhead is red vertical line with triangle
+- [ ] F9 key has 3 parts: cap, holster, arrow
+- [ ] F9 key clicks down (not bounces)
+- [ ] Range bars are yellow (#d4a84a)
+- [ ] Combined range is green (#4ac94a)
+- [ ] Checkmark traces across combined range
+
+### Animation Sequence
+- [ ] View 0 (0-1s): Fade in works
+- [ ] View 1 (1-3s): Timeline scrolling, playhead centered
+- [ ] View 2 (3-5s): Zoom out, F9 press, range spawns and drops
+- [ ] View 3 (5-8s): Further zoom, second F9 and range
+- [ ] View 4 (8-11s): 3 rapid F9 presses, 3 staggered ranges
+- [ ] View 5 (11-13s): Ranges merge to green, checkmark traces
+- [ ] View 6 (13-14s): Fade out
+- [ ] Loop is seamless
+
+### Behavior
+- [ ] Total duration is 14 seconds
+- [ ] Parallax works on desktop (mouse movement)
+- [ ] Auto-plays when scrolled into view (mobile)
+- [ ] Pauses when scrolled out of view (mobile)
+- [ ] Respects prefers-reduced-motion
+- [ ] Plays at 60fps (no jank)
+
+### Integration
+- [ ] Appears at top of Features page
+- [ ] No section title
+- [ ] Proper spacing above/below
+- [ ] Build passes
+
+---
+
+## Testing
+
+```bash
+npm run dev
+# Navigate to http://localhost:4321/features
+
+# Desktop:
+# - Watch full 14-second animation loop
+# - Move mouse - parallax should shift the container
+# - Verify F9 key clicks, not bounces
+# - Verify ranges spawn above then drop
+# - Verify 3 ranges merge to 1 green
+# - Verify checkmark traces
+
+# Mobile (devtools):
+# - Scroll animation into view - should play
+# - Scroll away - should pause
+# - Scroll back - should resume
+
+# Reduced motion (devtools > Rendering > Emulate):
+# - Animation should not play
+# - Static frame should show combined range
+```
+
+---
+
+## Notes
+
+This is a complex animation. Consider building iteratively:
+
+1. First: Get timeline and playhead rendering and scrolling
+2. Second: Add zoom transitions
+3. Third: Add F9 key with click animation
+4. Fourth: Add range spawning and movement
+5. Fifth: Add merge animation and checkmark
+6. Sixth: Add fade in/out
+7. Finally: Polish timing and add parallax
+
+If the full animation proves too complex for CSS alone, consider:
+- Using GSAP library for timeline sequencing
+- Breaking into multiple simpler animations
+- Creating in After Effects and exporting as Lottie
+
+Start with CSS approach first.

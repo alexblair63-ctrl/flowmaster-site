@@ -1,0 +1,55 @@
+# Task 01: Audit Existing Hero and Parallax Implementation
+
+## Objective
+
+Before making changes, audit the current hero section structure and the existing parallax implementation on the "Easy as 1, 2, 3" section to understand what we're working with.
+
+## Context
+
+The Flowmaster site is built with Astro. The hero currently has:
+- A centered single-column layout
+- "FLOWMASTER LIVE STUDIO" tagline (to be removed)
+- "Edit as you record" headline
+- Description text
+- CTA buttons (Download, See How It Works)
+- Possibly a fade-in animation on page load
+
+The "Easy as 1, 2, 3" section lower on the page has parallax effects on certain elements that we want to match stylistically.
+
+## Steps
+
+1. Locate the hero section component/page file
+2. Document the current HTML structure
+3. Identify any existing CSS animations or transitions
+4. Find the parallax implementation for "Easy as 1, 2, 3" section
+5. Note the parallax technique used (CSS, JS, scroll-based, mouse-based)
+6. Document any relevant CSS variables, spacing values, or design tokens
+
+## Deliverables
+
+Create a brief audit document or comments noting:
+- File paths for hero and parallax code
+- Current animation approach (if any)
+- Parallax implementation details
+- Any conflicts or considerations for the new animation
+
+## Acceptance Criteria
+
+- [ ] Hero section file(s) identified
+- [ ] Current hero structure documented
+- [ ] Existing animations identified and understood
+- [ ] Parallax implementation located and analyzed
+- [ ] Notes on how to match existing parallax style
+- [ ] Any existing fade-in animation behavior documented
+
+## Files to Examine
+
+Likely locations:
+- `src/pages/index.astro`
+- `src/components/Hero.astro` (or similar)
+- `src/styles/` directory
+- Any JS files handling scroll or mouse events
+
+## Notes
+
+This is a read-only task. Do not modify any files yet - just gather information for subsequent tasks.

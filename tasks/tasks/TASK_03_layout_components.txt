@@ -1,0 +1,384 @@
+# Task 03: Layout Components
+
+## Goal
+Create the Header, Footer, and update BaseLayout with navigation that fades in on scroll.
+
+---
+
+## 3.1 Header Component
+
+**src/components/Header.astro:**
+```astro
+---
+const navLinks = [
+  { href: '/features', label: 'Features' },
+  { href: '/future', label: 'Future' },
+  { href: '/about', label: 'About' },
+  { href: '/docs', label: 'Docs' },
+];
+---
+
+<header 
+  id="main-nav"
+  class="fixed top-0 left-0 right-0 z-50 opacity-0 pointer-events-none transition-opacity duration-300"
+>
+  <nav class="bg-black/80 backdrop-blur-md border-b border-bg-tertiary">
+    <div class="container-main flex items-center justify-between h-16">
+      <!-- Logo -->
+      <a href="/" class="flex items-center gap-2">
+        <span class="text-xl font-heading font-bold text-white">Flowmaster</span>
+      </a>
+      
+      <!-- Desktop Nav Links -->
+      <div class="hidden md:flex items-center gap-8">
+        {navLinks.map(link => (
+          <a 
+            href={link.href} 
+            class="text-gray-300 hover:text-white font-medium"
+          >
+            {link.label}
+          </a>
+        ))}
+      </div>
+      
+      <!-- CTA Button -->
+      <a href="/download" class="btn-primary text-sm py-2 px-4">
+        Download
+      </a>
+      
+      <!-- Mobile Menu Button (placeholder) -->
+      <button 
+        id="mobile-menu-btn"
+        class="md:hidden p-2 text-gray-300 hover:text-white"
+        aria-label="Toggle menu"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+  
+  <!-- Mobile Menu (placeholder - collapsed by default) -->
+  <div id="mobile-menu" class="md:hidden hidden bg-bg-secondary border-b border-bg-tertiary">
+    <div class="container-main py-4 flex flex-col gap-4">
+      {navLinks.map(link => (
+        <a 
+          href={link.href} 
+          class="text-gray-300 hover:text-white font-medium py-2"
+        >
+          {link.label}
+        </a>
+      ))}
+    </div>
+  </div>
+</header>
+
+<script>
+  // Nav fade-in on scroll
+  const nav = document.getElementById('main-nav');
+  const hero = document.getElementById('hero');
+  
+  if (nav && hero) {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          nav.classList.add('opacity-0', 'pointer-events-none');
+          nav.classList.remove('opacity-100', 'pointer-events-auto');
+        } else {
+          nav.classList.remove('opacity-0', 'pointer-events-none');
+          nav.classList.add('opacity-100', 'pointer-events-auto');
+        }
+      },
+      { threshold: 0.1 }
+    );
+    
+    observer.observe(hero);
+  } else if (nav) {
+    // No hero on page, show nav immediately
+    nav.classList.remove('opacity-0', 'pointer-events-none');
+    nav.classList.add('opacity-100', 'pointer-events-auto');
+  }
+  
+  // Mobile menu toggle
+  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  
+  if (mobileMenuBtn && mobileMenu) {
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+  }
+</script>
+```
+
+---
+
+## 3.2 Footer Component
+
+**src/components/Footer.astro:**
+```astro
+---
+const currentYear = new Date().getFullYear();
+
+const footerLinks = [
+  { href: '/features', label: 'Features' },
+  { href: '/future', label: 'Future' },
+  { href: '/about', label: 'About' },
+  { href: '/docs', label: 'Docs' },
+  { href: '/download', label: 'Download' },
+];
+
+const socialLinks = [
+  { 
+    href: 'https://discord.gg/S8uJpcK3qJ', 
+    label: 'Discord',
+    icon: 'discord'
+  },
+  { 
+    href: 'mailto:support@flowmastersuite.com', 
+    label: 'Email',
+    icon: 'email'
+  },
+  { 
+    href: '#', // Placeholder
+    label: 'LinkedIn',
+    icon: 'linkedin'
+  },
+  { 
+    href: '#', // Placeholder
+    label: 'YouTube',
+    icon: 'youtube'
+  },
+];
+---
+
+<footer class="bg-bg-secondary border-t border-bg-tertiary">
+  <div class="container-main py-12">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+      
+      <!-- Brand Column -->
+      <div>
+        <h3 class="text-xl font-heading font-bold mb-2">Flowmaster</h3>
+        <p class="text-gray-500 mb-4">Edit as you record</p>
+        <p class="text-sm text-gray-500">
+          An <a href="https://alenzie.com" class="text-alenzie-mint hover:underline">Alenzie</a> product
+        </p>
+      </div>
+      
+      <!-- Links Column -->
+      <div>
+        <h4 class="font-semibold mb-4">Links</h4>
+        <ul class="space-y-2">
+          {footerLinks.map(link => (
+            <li>
+              <a href={link.href} class="text-gray-400 hover:text-white">
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+      
+      <!-- Connect Column -->
+      <div>
+        <h4 class="font-semibold mb-4">Connect</h4>
+        <ul class="space-y-2">
+          {socialLinks.map(link => (
+            <li>
+              <a 
+                href={link.href} 
+                class="text-gray-400 hover:text-white flex items-center gap-2"
+                target={link.href.startsWith('http') ? '_blank' : undefined}
+                rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+              >
+                {link.label}
+                {link.href === '#' && <span class="text-xs text-gray-600">(coming soon)</span>}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+    
+    <!-- Bottom Bar -->
+    <div class="pt-8 border-t border-bg-tertiary text-center text-sm text-gray-500">
+      <p>&copy; {currentYear} Alenzie Solutions. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+```
+
+---
+
+## 3.3 Button Component
+
+**src/components/Button.astro:**
+```astro
+---
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'secondary';
+  size?: 'sm' | 'md' | 'lg';
+  class?: string;
+}
+
+const { 
+  href, 
+  variant = 'primary', 
+  size = 'md',
+  class: className = '' 
+} = Astro.props;
+
+const baseClasses = 'inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200';
+
+const variantClasses = {
+  primary: 'bg-brand-red hover:bg-brand-red-bright text-white hover:shadow-lg hover:shadow-brand-red/20',
+  secondary: 'bg-bg-tertiary hover:bg-gray-700 text-white border border-gray-700',
+};
+
+const sizeClasses = {
+  sm: 'text-sm py-2 px-4',
+  md: 'py-3 px-6',
+  lg: 'text-lg py-4 px-8',
+};
+
+const classes = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`;
+---
+
+{href ? (
+  <a href={href} class={classes}>
+    <slot />
+  </a>
+) : (
+  <button class={classes}>
+    <slot />
+  </button>
+)}
+```
+
+---
+
+## 3.4 Update BaseLayout
+
+**src/layouts/BaseLayout.astro:**
+```astro
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  showNav?: boolean;
+}
+
+const { 
+  title, 
+  description = "Edit as you record - Video editing automation for content creators",
+  showNav = true
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <title>{title} | Flowmaster</title>
+  </head>
+  <body class="min-h-screen flex flex-col">
+    {showNav && <Header />}
+    
+    <main class="flex-grow">
+      <slot />
+    </main>
+    
+    <Footer />
+  </body>
+</html>
+```
+
+---
+
+## 3.5 Test Page
+
+Update **src/pages/index.astro:**
+```astro
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Button from '../components/Button.astro';
+---
+
+<BaseLayout title="Home">
+  <!-- Hero with id for nav observer -->
+  <section id="hero" class="min-h-screen flex items-center justify-center">
+    <div class="container-main text-center">
+      <h1 class="mb-4">Flowmaster Live Studio</h1>
+      <p class="text-xl text-gray-300 mb-8">Edit as you record</p>
+      <div class="flex gap-4 justify-center">
+        <Button href="/download">Download Beta</Button>
+        <Button href="/features" variant="secondary">Learn More</Button>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Spacer section to test scroll -->
+  <section class="section-padding">
+    <div class="container-main">
+      <h2 class="mb-4">Test Section</h2>
+      <p>Scroll up to see the nav disappear, scroll down to see it appear.</p>
+      <div class="h-screen"></div>
+      <p>More content here...</p>
+    </div>
+  </section>
+</BaseLayout>
+```
+
+---
+
+## Acceptance Criteria
+
+- [ ] Header component renders with logo and nav links
+- [ ] Nav is invisible when hero is in view
+- [ ] Nav fades in when scrolled past hero (opacity transition)
+- [ ] Nav has backdrop blur effect
+- [ ] Mobile menu button appears on small screens
+- [ ] Mobile menu toggles open/closed
+- [ ] Footer renders with three columns
+- [ ] Footer has "An Alenzie product" with mint green link
+- [ ] Footer shows current year dynamically
+- [ ] Button component supports primary and secondary variants
+- [ ] Button component supports sm, md, lg sizes
+- [ ] Button renders as <a> when href provided, <button> otherwise
+- [ ] BaseLayout includes Header and Footer
+
+---
+
+## Testing
+
+```bash
+npm run dev
+# Open http://localhost:4321
+
+# Test nav behavior:
+# 1. On load, nav should be invisible
+# 2. Scroll down past hero - nav should fade in
+# 3. Scroll back up to hero - nav should fade out
+# 4. Click nav links - should navigate (pages will 404 until created)
+
+# Test footer:
+# 1. Scroll to bottom
+# 2. Verify three columns display
+# 3. Verify "Alenzie" link is mint green (#55ffa2)
+# 4. Verify current year shows
+
+# Test mobile:
+# 1. Resize browser to mobile width
+# 2. Verify hamburger menu appears
+# 3. Click hamburger - menu should toggle
+```

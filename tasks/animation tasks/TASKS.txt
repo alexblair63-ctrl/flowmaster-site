@@ -1,0 +1,80 @@
+# Flowmaster Logo Animation - Task Overview
+
+## Project Summary
+
+Implement a motion graphics logo animation for the Flowmaster Live Studio landing page hero, restructure the hero to a two-column layout, and add post-animation parallax effects.
+
+## Task Execution Order
+
+Execute these tasks sequentially. Each task builds on the previous.
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  01-audit-existing-hero.txt                                     │
+│  └─► Examine current hero structure and parallax implementation │
+├─────────────────────────────────────────────────────────────────┤
+│  02-create-animated-logo-component.txt                          │
+│  └─► Build the AnimatedLogo Astro component with SVG elements   │
+├─────────────────────────────────────────────────────────────────┤
+│  03-implement-intro-animation.txt                               │
+│  └─► CSS keyframes for the 5-stage reveal sequence              │
+├─────────────────────────────────────────────────────────────────┤
+│  04-restructure-hero-layout.txt                                 │
+│  └─► Two-column grid layout, integrate logo, remove tagline     │
+├─────────────────────────────────────────────────────────────────┤
+│  05-implement-parallax-breathing.txt                            │
+│  └─► Post-animation breathing + mouse parallax effects          │
+├─────────────────────────────────────────────────────────────────┤
+│  06-mobile-responsive.txt                                       │
+│  └─► Mobile layout with logo above text                         │
+├─────────────────────────────────────────────────────────────────┤
+│  07-integration-testing.txt                                     │
+│  └─► Cross-browser testing, polish, accessibility               │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+## Quick Reference
+
+### Animation Timing
+- Red square: 0ms start, 750ms duration, 50px rise
+- Yellow square: 500ms start, 750ms duration, 50px rise
+- Green square: 1000ms start, 750ms duration, 50px rise
+- "Flowmaster": 1200ms start, 750ms duration, 85%→100% scale + 30px rise
+- "LIVE STUDIO": 1500ms start, 750ms duration, 15px rise
+
+### Key Files to Create
+- `src/components/AnimatedLogo.astro`
+- `src/styles/logo-animation.css`
+- `src/scripts/logo-parallax.js`
+
+### Key Changes
+- Hero: single-column centered → two-column (text left, logo right)
+- Remove "FLOWMASTER LIVE STUDIO" tagline from hero text
+- Add breathing animation (continuous, subtle)
+- Add mouse parallax (desktop only, ~20px drift)
+
+### Breakpoints
+- Desktop: ≥768px (two-column)
+- Mobile: <768px (stacked, logo on top)
+
+### Assets Location
+- Logo SVGs: `LogoAssets/Logos/`
+- Reference mockups: `LogoAssets/Other/`
+
+## Technical Constraints
+
+- Pure CSS animations (no libraries)
+- Vanilla JavaScript (no frameworks for animation)
+- Astro component architecture
+- GPU-accelerated properties only (transform, opacity)
+- Support prefers-reduced-motion
+
+## Success Criteria
+
+1. Logo animates in smoothly over ~2.25 seconds on page load
+2. After animation, logo breathes/bobs continuously
+3. On desktop, logo responds to mouse position with subtle parallax
+4. Desktop shows two-column hero layout
+5. Mobile shows stacked layout with logo on top
+6. Performance is smooth (60fps)
+7. Works across modern browsers

@@ -1,0 +1,789 @@
+# FLOWMASTER SUITE WEBSITE - CLAUDE CODE PROJECT PACKET
+# Version: 1.0
+# Date: 2026-01-21
+# Domain: flowmastersuite.com
+
+================================================================================
+PROJECT OVERVIEW
+================================================================================
+
+You are building a marketing website for Flowmaster Suite, a video editing 
+automation toolkit for content creators who record long gaming/streaming sessions.
+
+The product solves the "pre-editing" problem: creators record 3-5 hour sessions
+and spend hours scrubbing through footage to find highlights. Flowmaster lets
+users press F9 during recording to mark moments, then automatically cuts footage
+to keep only the good parts.
+
+THREE-STEP SYSTEM:
+1. RECORD - Press F9 during recording to mark highlight moments (Flowmaster Hotkey)
+2. AUTOCUT - Automatically cut footage based on timestamps (AutoCut)
+3. AUTOCLEAN - Safely delete original files after editing (AutoCleaner)
+
+TAGLINE: "Edit as you record"
+
+BUSINESS MODEL: Free beta, then subscription. Early adopters get 50% off first year.
+
+================================================================================
+TECHNICAL STACK
+================================================================================
+
+FRAMEWORK: Astro (already initialized in ~/Desktop/flowmaster-site)
+STYLING: Tailwind CSS (add via: npx astro add tailwind)
+ANIMATIONS: CSS + vanilla JavaScript (no heavy libraries)
+DEPLOYMENT: GitHub Pages (later)
+
+INSTALL DEPENDENCIES:
+- npx astro add tailwind
+- No other major dependencies needed initially
+
+FILE STRUCTURE TO CREATE:
+```
+flowmaster-site/
+├── src/
+│   ├── layouts/
+│   │   └── BaseLayout.astro
+│   ├── components/
+│   │   ├── Header.astro
+│   │   ├── Footer.astro
+│   │   ├── Hero.astro
+│   │   ├── ThreeStepAnimation.astro
+│   │   ├── HowItWorks.astro
+│   │   ├── Features.astro
+│   │   ├── FutureFeatures.astro
+│   │   ├── Testimonials.astro
+│   │   ├── CTASection.astro
+│   │   ├── Button.astro
+│   │   └── animations/
+│   │       ├── RecordAnimation.astro (SVG + JS)
+│   │       ├── AutoCutAnimation.astro (SVG + JS)
+│   │       └── AutoCleanAnimation.astro (SVG + JS)
+│   ├── pages/
+│   │   ├── index.astro
+│   │   ├── features.astro
+│   │   ├── future.astro
+│   │   ├── about.astro
+│   │   ├── docs/
+│   │   │   ├── index.astro (getting started)
+│   │   │   └── obs-setup.astro
+│   │   └── download.astro
+│   ├── styles/
+│   │   └── global.css
+│   └── assets/
+│       ├── flowmaster-logo-vertical.png
+│       ├── flowmaster-logo-horizontal.png
+│       ├── mockup-interface.png
+│       └── team/
+│           ├── alex.jpg (placeholder)
+│           ├── mackenzie.jpg (placeholder)
+│           └── austin.jpg (placeholder)
+├── public/
+│   └── favicon.svg
+├── astro.config.mjs
+└── tailwind.config.mjs
+```
+
+================================================================================
+DESIGN SYSTEM
+================================================================================
+
+COLOR PALETTE:
+--color-bg-primary: #0a0a0a (near black, main background)
+--color-bg-secondary: #141414 (slightly lighter, cards/sections)
+--color-bg-tertiary: #1a1a1a (hover states, borders)
+
+--color-red: #c94a4a (Flowmaster brand red, from logo)
+--color-red-bright: #e05555 (hover/accent states)
+
+--color-white: #ffffff
+--color-gray-100: #f5f5f5
+--color-gray-300: #d4d4d4
+--color-gray-500: #737373
+--color-gray-700: #404040
+
+--color-alenzie-mint: #55ffa2 (ONLY used for Alenzie footer link)
+
+STEP COLORS (for 1-2-3 animation section):
+--color-step-1: #c94a4a (red - Record)
+--color-step-2: #d4a84a (yellow/gold - AutoCut)  
+--color-step-3: #4ac94a (green - AutoClean)
+
+TYPOGRAPHY:
+- Headings: Inter or Space Grotesk (techy but professional)
+- Body: Inter
+- Weights: 400 (body), 500 (emphasis), 600 (subheadings), 700 (headings)
+
+FONT LOADING (add to BaseLayout):
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+SPACING SCALE (Tailwind defaults are fine):
+- Section padding: py-20 or py-24
+- Container max-width: max-w-6xl mx-auto px-6
+
+BACKGROUND TEXTURE:
+Apply a subtle carbon fiber pattern to the body background.
+CSS approach:
+```css
+body {
+  background-color: #0a0a0a;
+  background-image: 
+    linear-gradient(45deg, #0d0d0d 25%, transparent 25%),
+    linear-gradient(-45deg, #0d0d0d 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #0d0d0d 75%),
+    linear-gradient(-45deg, transparent 75%, #0d0d0d 75%);
+  background-size: 4px 4px;
+  background-position: 0 0, 0 2px, 2px -2px, -2px 0px;
+}
+```
+This should be VERY subtle - barely noticeable, just adds depth.
+
+================================================================================
+NAVIGATION BEHAVIOR
+================================================================================
+
+The navbar should be INVISIBLE when user first loads the page.
+As user scrolls down (past the hero section), navbar fades in and becomes fixed.
+
+NAVBAR STRUCTURE:
+- Logo (left) - links to home
+- Nav links (center): Features, Future, About, Docs
+- Download button (right) - styled as primary CTA button
+
+IMPLEMENTATION:
+```javascript
+// In Header.astro or separate script
+const nav = document.querySelector('nav');
+const hero = document.querySelector('#hero');
+
+const observer = new IntersectionObserver(
+  ([entry]) => {
+    if (entry.isIntersecting) {
+      nav.classList.add('opacity-0', 'pointer-events-none');
+      nav.classList.remove('opacity-100');
+    } else {
+      nav.classList.remove('opacity-0', 'pointer-events-none');
+      nav.classList.add('opacity-100');
+    }
+  },
+  { threshold: 0.1 }
+);
+
+observer.observe(hero);
+```
+
+Nav styling when visible:
+- Background: bg-black/80 backdrop-blur-md
+- Fixed position: fixed top-0 left-0 right-0 z-50
+- Transition: transition-opacity duration-300
+
+================================================================================
+PAGE: HOME (index.astro)
+================================================================================
+
+SECTION 1: HERO
+---------------
+Style reference: alenzie.com - minimal, focused, plenty of whitespace (darkspace)
+
+Layout:
+- Full viewport height (min-h-screen)
+- Centered content
+- Logo at top (small, subtle)
+- Main heading: "Flowmaster Live Studio"
+- Subheading/tagline: "Edit as you record"
+- Brief one-liner: "Stop scrubbing through hours of footage. Mark your highlights live, cut automatically."
+- Primary CTA button: "Download Beta" → links to /download
+- Small text below button: "Free during beta • Windows 10/11"
+
+Visual treatment:
+- Dark background with subtle carbon texture
+- Logo with slight glow/ambient effect
+- Text appears with subtle fade-in on load (0.5s delay, 0.8s duration)
+- Minimal - no clutter, no extra graphics in this section
+
+SECTION 2: THREE-STEP ANIMATION
+-------------------------------
+This is the signature visual section. Three horizontal columns showing the workflow.
+
+Container:
+- Optional small title above: "How it works" or just let the visuals speak
+- Three equal columns on desktop, stack vertically on mobile
+- Each column has:
+  - Step number (1, 2, 3) in respective color
+  - Step name (Record, AutoCut, AutoClean)
+  - Animated SVG illustration
+  - Brief description (1 sentence)
+
+STEP 1 - RECORD (Red #c94a4a):
+- Illustration: Finger pressing down on F9 key
+- Animation: Finger bounces up and down on key (idle: slight float, hover: active pressing)
+- Description: "Press F9 to mark highlight moments while you play"
+
+STEP 2 - AUTOCUT (Yellow #d4a84a):
+- Illustration: Scissors cutting through film strip
+- Animation: Scissors open/close as they move through film (idle: slight float, hover: cutting motion)
+- Description: "Automatically trim footage to just the good parts"
+
+STEP 3 - AUTOCLEAN (Green #4ac94a):
+- Illustration: Duster sweeping with dust clouds
+- Animation: Duster sways side to side, dust particles fade in/out (idle: slight float, hover: active sweeping)
+- Description: "Safely clean up original files and free storage"
+
+ANIMATION BEHAVIOR:
+- Desktop: Elements have subtle idle float (translateY ±3px, 3s ease-in-out infinite)
+- Desktop: On hover (within ~50px proximity), animation activates to full loop
+- Mobile: Animations auto-play when scrolled into view, loop 2-3 times, then return to idle
+- Parallax: These elements respond to mouse position (desktop only), moving ~3% relative to cursor
+- Stagger: When section scrolls into view, columns animate in one by one (1... 2... 3...) with 0.3s delays
+
+SVG NOTES:
+For initial development, create simple placeholder SVGs that capture the concept.
+Use geometric shapes and clear silhouettes. These can be refined later.
+The user will provide sketches for the final versions - for now, make them functional.
+
+SECTION 3: HOW IT WORKS
+-----------------------
+More detailed explanation of the workflow. Can use icons or simple graphics.
+
+Content:
+1. "Record your session" - Open OBS, hit record, play your game
+2. "Mark the moments" - Press F9 whenever something highlight-worthy happens
+3. "Run AutoCut" - One click to trim your footage to just the marked segments
+4. "Clean up" - Delete massive original files, keep just the edited versions
+
+Format: Could be a vertical timeline, numbered steps, or icon grid.
+Keep it clean and scannable.
+
+SECTION 4: FEATURES PREVIEW
+---------------------------
+Quick feature highlights that link to the full Features page.
+
+Feature cards (3-4):
+- "Works with OBS" - Integrates seamlessly with your existing setup
+- "No re-encoding" - Stream copy means instant exports, no quality loss
+- "Webcam sync" - Automatically matches your webcam footage too
+- "Recycle bin safe" - Deleted files go to recycle bin, always recoverable
+
+CTA: "See all features →" links to /features
+
+SECTION 5: FUTURE FEATURES (Preview)
+------------------------------------
+Teaser for the "What we're building" section.
+
+Show the mockup interface image (the Photoshop prototype with red/yellow/green tabs).
+Position it as an exciting preview of what's coming.
+
+Layout: Image on one side, bullet points on other:
+- "Unified interface for seamless workflow"
+- "AI assistant tools for smart editing"
+- "Direct export to Premiere, DaVinci, CapCut"
+
+CTA: "See our roadmap →" links to /future
+
+SECTION 6: TESTIMONIALS
+-----------------------
+5 testimonial cards in a horizontal swipeable carousel.
+
+For now, use placeholder content:
+- Placeholder avatar (gray circle with initials)
+- Placeholder name and title (e.g., "Gaming Creator")
+- Placeholder quote about how Flowmaster saved them time
+
+Featured video testimonial:
+- Prominent placement (could be above or integrated with carousel)
+- Placeholder video thumbnail with play button
+- Text: "See how [Name] uses Flowmaster" (placeholder)
+
+Carousel behavior:
+- Swipeable on mobile (touch)
+- Arrow buttons on desktop
+- Dots indicator below
+- Auto-advance optional (probably not, let user control)
+
+SECTION 7: FINAL CTA
+--------------------
+Strong call to action section before footer.
+
+Headline: "Ready to stop wasting time in post?"
+Subhead: "Join the beta and get 50% off your first year when we launch."
+
+Primary button: "Download Free Beta" → /download
+Secondary text: "Windows 10/11 • No credit card required"
+
+================================================================================
+PAGE: FEATURES (/features)
+================================================================================
+
+Full breakdown of Flowmaster capabilities.
+
+HERO:
+- Heading: "Features"
+- Subhead: "Everything you need to eliminate pre-editing"
+
+FEATURE SECTIONS (each with icon/illustration):
+
+1. Global Hotkey System
+   - F9 works even when games have focus
+   - Timestamps saved automatically
+   - Works with any recording software (designed for OBS)
+
+2. Smart File Matching
+   - Auto-matches timestamp files to video files
+   - Handles webcam footage separately
+   - Tolerant timing (±2-5 second matching window)
+
+3. Intelligent Range Calculation
+   - Configurable lookback window (capture moments before you hit the key)
+   - Automatic overlap merging (no duplicate frames)
+   - Preview ranges before processing
+
+4. Lightning Fast Processing
+   - Stream copy mode (no re-encoding)
+   - Preserves full quality
+   - Process hours of footage in minutes
+
+5. Safe Cleanup
+   - AutoCleaner finds processed videos
+   - Shows exactly how much space you'll save
+   - Sends to Recycle Bin (always recoverable)
+
+6. OBS Integration
+   - Works with Advanced Scene Switcher plugin
+   - Auto-start/stop with recording
+   - No manual launching required
+
+CTA at bottom: "Download Beta" → /download
+
+================================================================================
+PAGE: FUTURE FEATURES (/future)
+================================================================================
+
+HERO:
+- Heading: "What We're Building"
+- Subhead: "The future of Flowmaster"
+
+MAIN CONTENT:
+Large mockup image display (the Photoshop interface prototype)
+Caption: "Unified Flowmaster Interface - Coming Soon"
+
+ROADMAP ITEMS:
+
+1. Unified Interface
+   - All three tools in one window
+   - Tabbed workflow: Record → Edit → Clean
+   - Real-time audio levels and source management
+   - Icon: Window/interface graphic
+
+2. AI Assistant Tools
+   - Automatic highlight detection (detect exciting moments without pressing F9)
+   - Smart silence removal
+   - Scene detection and auto-chaptering
+   - Icon: Brain/AI graphic
+
+3. Direct Editor Export
+   - One-click export to Premiere Pro
+   - DaVinci Resolve timeline integration
+   - CapCut project file generation
+   - Markers and cuts pre-applied
+   - Icon: Export/arrow graphic
+
+TIMELINE (optional):
+Could show rough timeline: "Q1 2026: Unified Interface" etc.
+Or keep it vague: "Coming soon" for all items
+
+CTA: "Get notified when new features drop" → email capture or Discord link
+
+================================================================================
+PAGE: ABOUT (/about)
+================================================================================
+
+HERO:
+- Heading: "About Flowmaster"
+- Subhead: "Built by creators, for creators"
+
+STORY SECTION:
+Brief origin story (2-3 paragraphs):
+"Flowmaster started because editing sucked. After recording hours of gameplay, 
+the real work was just beginning - scrubbing through footage, trying to remember 
+where the good parts were, making cut after cut after cut.
+
+We built Flowmaster to solve our own problem. Mark the moments while you're in 
+the zone, let the software handle the tedious cuts later. What used to take 
+hours now takes minutes.
+
+We're a small team passionate about helping creators spend less time editing 
+and more time creating."
+
+TEAM SECTION:
+Three team member cards, side by side on desktop.
+
+Alexander Blair
+- Role: CEO / Creative Lead
+- Photo: placeholder (professional headshot style)
+- Brief: "Founder & creator. Handles branding, marketing, and front-end design."
+- Education: UCLA, UCSD
+
+MacKenzie Drury
+- Role: CTO / Full-Stack Developer
+- Photo: placeholder
+- Brief: "Lead software developer and back-end architect."
+- Education: UCLA, Georgia Tech
+
+Austin Lim
+- Role: Legal Strategy Advisor
+- Photo: placeholder
+- Brief: "Legal consultant responsible for compliance and procedure."
+- Education: UCSC
+
+Style: Professional but approachable. Show personality.
+
+COMPANY INFO:
+"Flowmaster is an Alenzie product."
+Brief mention of Alenzie Solutions as parent company.
+
+================================================================================
+PAGE: DOCS (/docs and /docs/obs-setup)
+================================================================================
+
+Simple documentation section. Can be expanded later.
+
+/docs (index):
+- Heading: "Documentation"
+- Subhead: "Get started with Flowmaster"
+
+Quick Start Guide:
+1. Download and install Flowmaster
+2. Set up OBS integration (link to obs-setup)
+3. Configure your output folder
+4. Start recording and press F9 to mark highlights
+5. Run AutoCut to process your footage
+6. Use AutoCleaner to free up space
+
+Links to:
+- OBS Setup Guide
+- Configuration Options (placeholder)
+- Troubleshooting (placeholder)
+- FAQ (placeholder)
+
+/docs/obs-setup:
+- Heading: "OBS Setup Guide"
+- Step-by-step with screenshots (placeholders for now)
+
+Steps:
+1. Install Advanced Scene Switcher plugin
+   - Link: https://obsproject.com/forum/resources/advanced-scene-switcher.395/
+   - Brief installation instructions
+
+2. Configure Start Recording macro
+   - Condition: Recording → Started
+   - Action: Run → flowmaster-start.exe
+   - (Screenshot placeholder)
+
+3. Configure Stop Recording macro
+   - Condition: Recording → Stopped
+   - Action: Run → flowmaster-stop.exe
+   - (Screenshot placeholder)
+
+4. Test your setup
+   - Start a test recording
+   - Press F9 a few times
+   - Stop recording
+   - Check that timestamp file was created
+
+================================================================================
+PAGE: DOWNLOAD (/download)
+================================================================================
+
+Clean, focused download page.
+
+HERO:
+- Heading: "Download Flowmaster"
+- Subhead: "Start editing smarter today"
+
+DOWNLOAD SECTION:
+
+Windows Download Card:
+- Windows logo/icon
+- "Windows 10/11"
+- Version number: "Beta v0.1.0" (placeholder)
+- Download button: "Download for Windows"
+- File size: "~50 MB" (placeholder)
+- Button click → email capture flow (see below)
+
+Mac Card (grayed out):
+- Apple logo/icon
+- "macOS"
+- "Coming Soon"
+- Disabled button or "Get notified" link
+
+Linux Card (grayed out):
+- Linux logo/icon
+- "Linux"
+- "Coming Soon"
+- Disabled button or "Get notified" link
+
+EMAIL CAPTURE FLOW:
+When user clicks Windows download button, show modal or expand section:
+
+"Almost there! Enter your email to download."
+
+Form fields:
+- Email (required)
+- Name (optional)
+- "How did you hear about us?" dropdown (optional)
+  - YouTube
+  - Twitter/X
+  - Discord
+  - Reddit
+  - Friend
+  - Other
+
+Submit button: "Get Download Link"
+
+On submit:
+- Store email (integration TBD - could be simple Formspree, or custom backend later)
+- Show download link / auto-start download
+- Show confirmation: "Check your email for your license key!"
+
+BETA INFO:
+Below download section:
+"Flowmaster is free during beta. Early adopters will receive 50% off their first 
+year when we launch the full version."
+
+REQUIREMENTS:
+- Windows 10 or Windows 11
+- OBS Studio (recommended)
+- FFmpeg (bundled with installer)
+- ~100MB disk space
+
+================================================================================
+COMPONENT: FOOTER
+================================================================================
+
+Dark footer with subtle border-top.
+
+Layout (3 columns on desktop):
+
+Column 1 - Brand:
+- Flowmaster logo (small)
+- Tagline: "Edit as you record"
+- "An Alenzie product" - "Alenzie" is a link to alenzie.com, colored #55ffa2
+
+Column 2 - Links:
+- Features
+- Future
+- About
+- Docs
+- Download
+
+Column 3 - Connect:
+- Discord: https://discord.gg/S8uJpcK3qJ
+- Email: support@flowmastersuite.com
+- LinkedIn: # (placeholder, show icon but link to #)
+- YouTube: # (placeholder, show icon but link to #)
+
+Bottom bar:
+- "© 2026 Alenzie Solutions. All rights reserved."
+
+================================================================================
+ANIMATION SPECIFICATIONS
+================================================================================
+
+GENERAL PRINCIPLES:
+- Animations should feel polished but not overwhelming
+- Performance is key - use CSS transforms and opacity, avoid layout thrash
+- Respect reduced-motion preferences: @media (prefers-reduced-motion: reduce)
+
+ENTRANCE ANIMATIONS:
+Elements animate in as they scroll into view.
+- Use Intersection Observer API
+- Fade + slight translateY (20px → 0)
+- Duration: 0.6s, easing: ease-out
+- Stagger multiple elements by 0.1s each
+
+HERO ENTRANCE:
+- Logo fades in first (0.3s delay)
+- Heading fades in (0.5s delay)
+- Tagline fades in (0.7s delay)
+- CTA button fades in (0.9s delay)
+
+THREE-STEP SECTION:
+- Columns stagger in: first at 0s, second at 0.3s, third at 0.6s
+- Each column: fade + translateY
+
+SVG IDLE ANIMATION (all three):
+```css
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.svg-idle {
+  animation: float 3s ease-in-out infinite;
+}
+```
+
+SVG HOVER ACTIVATION:
+On hover (or when in proximity on desktop), add class that triggers active animation.
+Each SVG has its own active animation keyframes.
+
+PARALLAX EFFECT:
+Desktop only. Track mouse position, apply subtle transform to SVG containers.
+```javascript
+document.addEventListener('mousemove', (e) => {
+  const x = (e.clientX / window.innerWidth - 0.5) * 2; // -1 to 1
+  const y = (e.clientY / window.innerHeight - 0.5) * 2;
+  
+  document.querySelectorAll('.parallax-element').forEach(el => {
+    const depth = el.dataset.depth || 0.03;
+    const moveX = x * depth * 100;
+    const moveY = y * depth * 100;
+    el.style.transform = `translate(${moveX}px, ${moveY}px)`;
+  });
+});
+```
+
+MOBILE SCROLL-TRIGGERED:
+```javascript
+const observer = new IntersectionObserver(
+  (entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('animate-active');
+        // Remove after a few loops
+        setTimeout(() => {
+          entry.target.classList.remove('animate-active');
+        }, 6000); // 2-3 loops at ~2s each
+      }
+    });
+  },
+  { threshold: 0.5 }
+);
+```
+
+================================================================================
+SVG PLACEHOLDER SPECIFICATIONS
+================================================================================
+
+These are starter SVGs. User will provide sketches for refinement later.
+
+RECORD ANIMATION (Finger + F9 Key):
+- Viewbox: 0 0 200 200
+- Key: Rounded rectangle, dark gray with "F9" text
+- Finger: Simple hand silhouette pointing down
+- Animation: Finger translateY to simulate press
+
+AUTOCUT ANIMATION (Scissors + Film):
+- Viewbox: 0 0 200 200
+- Film strip: Horizontal strip with perforations and frames
+- Scissors: Two blade shapes that rotate to open/close
+- Animation: Scissors rotate, translateX across film
+
+AUTOCLEAN ANIMATION (Duster + Dust):
+- Viewbox: 0 0 200 200
+- Duster: Feather duster shape (handle + fluffy head)
+- Dust: 3-5 small circles/blobs
+- Animation: Duster rotates side to side, dust fades in/out
+
+Color each SVG in its respective step color (red/yellow/green).
+
+================================================================================
+ASSETS NEEDED
+================================================================================
+
+FROM USER (to be provided):
+- flowmaster-logo-vertical.png (for square/icon uses)
+- flowmaster-logo-horizontal.png (for header)
+- mockup-interface.png (the Photoshop prototype)
+- Team photos (or confirm using placeholders)
+- SVG sketches for animations (when ready)
+
+TO BE CREATED:
+- favicon.svg (simple "F" or Flowmaster icon)
+- Placeholder team avatars
+- Social media icons (Discord, LinkedIn, YouTube, Email)
+- Simple icons for features (can use Lucide or similar)
+
+================================================================================
+DEVELOPMENT PHASES
+================================================================================
+
+PHASE 1: Foundation
+- Set up Astro project structure
+- Install Tailwind
+- Create BaseLayout with global styles
+- Create Header and Footer components
+- Implement nav scroll behavior
+
+PHASE 2: Homepage Core
+- Build Hero section
+- Build basic Three-Step section (without animations)
+- Build How It Works section
+- Build Features preview
+- Build CTA section
+
+PHASE 3: Inner Pages
+- Build Features page
+- Build Future Features page
+- Build About page
+- Build Docs pages
+- Build Download page
+
+PHASE 4: Animations
+- Add entrance animations (scroll-triggered)
+- Create placeholder SVGs for three steps
+- Implement idle float animations
+- Implement hover-activated animations
+- Add parallax effect
+- Add mobile scroll-triggered behavior
+
+PHASE 5: Testimonials
+- Build carousel component
+- Add placeholder testimonials
+- Add video testimonial placeholder
+
+PHASE 6: Polish
+- Responsive testing
+- Performance optimization
+- Accessibility audit
+- Final visual tweaks
+
+================================================================================
+NOTES FOR CLAUDE CODE
+================================================================================
+
+1. Start with Phase 1 and 2 to get a working homepage quickly.
+
+2. For SVG animations, create simple functional placeholders first. The user 
+   will provide sketches later for refinement. Don't spend too long making 
+   them perfect initially.
+
+3. The email capture on /download can initially just be a form that doesn't 
+   submit anywhere (or use Formspree for quick implementation). The user will 
+   integrate a proper backend later.
+
+4. All placeholder content should be clearly marked with comments so it's 
+   easy to find and replace later.
+
+5. Prioritize getting the visual feel right - dark, techy, professional, 
+   with pops of color in the three-step section.
+
+6. The parallax and hover animations are important for the "wow factor" but 
+   should be subtle (3% movement range). Don't make it feel like a video game.
+
+7. Test the navbar fade behavior early - this is a key part of the UX.
+
+8. For icons, Lucide (lucide.dev) is a good lightweight option that works 
+   well with Astro/Tailwind.
+
+================================================================================
+QUICK START COMMANDS
+================================================================================
+
+cd ~/Desktop/flowmaster-site
+npx astro add tailwind
+npm run dev
+
+Then start building components in src/components/ and pages in src/pages/.
+
+================================================================================
+END OF PACKET
+================================================================================

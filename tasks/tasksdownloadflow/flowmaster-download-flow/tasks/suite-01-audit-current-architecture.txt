@@ -1,0 +1,63 @@
+# Suite Task 01: Audit Current Architecture
+
+## Objective
+
+Understand the Flowmaster Suite codebase structure to determine how to implement session counting, the gate UI, and telemetry stubs.
+
+## Context
+
+Flowmaster Suite is a multi-language project. Currently:
+- Installer wizard works
+- After install, users must manually run scripts in specific order
+- No unified UI exists yet (planned for future)
+- Need to add session gating and email capture
+
+## Steps
+
+1. Map out the repository structure
+2. Identify what languages/frameworks are in use
+3. Find the main entry point(s) - what runs when a user "starts" Flowmaster?
+4. Understand the current startup sequence
+5. Identify where persistent data is stored (config files, registry, etc.)
+6. Look for any existing UI components or window creation code
+7. Determine the best insertion point for:
+   - Session counting logic
+   - Blocking gate UI on session 4+
+8. Check for any existing analytics or logging
+
+## Key Questions to Answer
+
+1. **Entry point:** What file/script is the main launcher?
+2. **Languages:** What's the primary language for application logic?
+3. **Persistence:** Where can we store session count that survives restarts?
+4. **UI capability:** Is there any existing framework for showing windows/dialogs?
+5. **Web UI feasibility:** What's the simplest way to spawn a local web-based window? (Electron-style, Python webview, system browser, etc.)
+
+## Deliverables
+
+Create a brief architecture document noting:
+- Repository structure overview
+- Languages and frameworks in use
+- Main entry point(s)
+- Recommended approach for session storage
+- Recommended approach for web-based gate UI
+- Any concerns or blockers
+
+## Acceptance Criteria
+
+- [ ] Repository structure understood
+- [ ] Main entry point identified
+- [ ] Session persistence approach determined
+- [ ] Web UI implementation approach determined
+- [ ] Clear plan for where to insert new functionality
+- [ ] Any dependencies that need to be added are identified
+
+## Notes
+
+This is a read-only audit task. The findings will inform the implementation approach for subsequent tasks.
+
+The web-based UI window was chosen for styling flexibility. Look for the simplest way to achieve this given the existing stack - options might include:
+- Python `webview` library
+- Spawning a local HTTP server + opening system browser
+- Electron or similar (might be overkill)
+- Tauri (if Rust is heavily used)

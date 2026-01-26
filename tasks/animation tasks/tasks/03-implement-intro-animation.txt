@@ -1,0 +1,120 @@
+# Task 03: Implement Intro Animation
+
+## Objective
+
+Create the CSS keyframe animations and timing for the 5-stage logo reveal sequence.
+
+## Context
+
+The animation plays once on page load, revealing logo elements in a staggered cascade. Each element fades in while also performing a motion (rise or scale).
+
+## Animation Timing Specification
+
+| Element | Start | Duration | Transform |
+|---------|-------|----------|-----------|
+| Red Square | 0ms | 750ms | translateY(50px) → translateY(0), opacity 0→1 |
+| Yellow Square | 500ms | 750ms | translateY(50px) → translateY(0), opacity 0→1 |
+| Green Square | 1000ms | 750ms | translateY(50px) → translateY(0), opacity 0→1 |
+| "Flowmaster" | 1200ms | 750ms | scale(0.85) translateY(30px) → scale(1) translateY(0), opacity 0→1 |
+| "LIVE STUDIO" | 1500ms | 750ms | translateY(15px) → translateY(0), opacity 0→1 |
+
+Total sequence: ~2.25 seconds until all elements fully visible.
+
+## Steps
+
+1. Create `src/styles/logo-animation.css` (or add to existing styles)
+2. Define keyframes for each animation type:
+   - `fadeRiseSquare` - for the colored squares
+   - `fadeScaleRise` - for Flowmaster text
+   - `fadeRiseSmall` - for LIVE STUDIO text
+3. Apply animations with appropriate delays using `animation-delay`
+4. Use `animation-fill-mode: forwards` to maintain final state
+5. Use smooth easing (e.g., `ease-out` or `cubic-bezier`)
+
+## CSS Structure
+
+```css
+/* Keyframes */
+@keyframes fadeRiseSquare {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeScaleRise {
+  from {
+    opacity: 0;
+    transform: scale(0.85) translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes fadeRiseSmall {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animation application */
+.logo-red {
+  animation: fadeRiseSquare 750ms ease-out forwards;
+  animation-delay: 0ms;
+}
+
+.logo-yellow {
+  animation: fadeRiseSquare 750ms ease-out forwards;
+  animation-delay: 500ms;
+}
+
+.logo-green {
+  animation: fadeRiseSquare 750ms ease-out forwards;
+  animation-delay: 1000ms;
+}
+
+.logo-text-flowmaster {
+  animation: fadeScaleRise 750ms ease-out forwards;
+  animation-delay: 1200ms;
+}
+
+.logo-text-livestudio {
+  animation: fadeRiseSmall 750ms ease-out forwards;
+  animation-delay: 1500ms;
+}
+```
+
+## Acceptance Criteria
+
+- [ ] CSS file created with keyframe definitions
+- [ ] Three distinct keyframes for the different motion types
+- [ ] Correct animation delays matching the timing spec
+- [ ] `animation-fill-mode: forwards` applied to maintain end state
+- [ ] Smooth easing applied (not linear)
+- [ ] Animation plays automatically on page load
+- [ ] All 5 elements visible and in correct position after animation completes
+- [ ] Animation only plays once (does not loop)
+- [ ] No janky or jumpy motion - smooth transitions throughout
+
+## Performance Notes
+
+- Use `transform` and `opacity` only (GPU-accelerated properties)
+- Avoid animating layout properties (width, height, top, left, margin)
+- Consider adding `will-change: transform, opacity` to animated elements
+
+## Testing
+
+- Refresh page multiple times to verify animation plays correctly each time
+- Check that elements don't "flash" visible before animation starts
+- Verify timing feels natural with appropriate overlap between stages

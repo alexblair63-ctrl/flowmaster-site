@@ -1,0 +1,200 @@
+# Suite Task 03: Build Gate UI Window
+
+## Objective
+
+Create a web-based UI window that blocks application use after 3 sessions until the user provides their email and enters an access key.
+
+## Context
+
+After the free trial (3 sessions), users must:
+1. Enter their email to "receive" an access key
+2. Enter the access key to unlock the software
+
+For now, this is stubbed - any email and any key are accepted. The UI should be styled nicely and feel professional.
+
+## UI Flow
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         SCREEN 1                                │
+│                                                                 │
+│              [Flowmaster Logo]                                  │
+│                                                                 │
+│         Your free trial has ended.                              │
+│                                                                 │
+│    Enter your email to claim your free beta access key          │
+│    and get 50% off at full release.                             │
+│                                                                 │
+│    ┌─────────────────────────────────────────┐                  │
+│    │ Email address                           │                  │
+│    └─────────────────────────────────────────┘                  │
+│                                                                 │
+│              [ Send Access Key ]                                │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│                         SCREEN 2                                │
+│                                                                 │
+│              [Flowmaster Logo]                                  │
+│                                                                 │
+│         Access key sent to your email!                          │
+│                                                                 │
+│    Enter your access key below to unlock Flowmaster.            │
+│                                                                 │
+│    ┌─────────────────────────────────────────┐                  │
+│    │ Access key                              │                  │
+│    └─────────────────────────────────────────┘                  │
+│                                                                 │
+│              [ Activate Flowmaster ]                            │
+│                                                                 │
+│    ─────────────────────────────────────────                    │
+│    Didn't receive it? Check spam or [resend]                    │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│                         SCREEN 3                                │
+│                                                                 │
+│              [Flowmaster Logo]                                  │
+│                                                                 │
+│              ✓ Flowmaster Activated!                            │
+│                                                                 │
+│    Thank you for joining the beta. You'll receive               │
+│    50% off when Flowmaster officially launches.                 │
+│                                                                 │
+│              [ Start Using Flowmaster ]                         │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+## Technical Implementation
+
+### Approach: Python webview (recommended)
+
+Use the `pywebview` library to create a native window containing a web page:
+
+```python
+import webview
+
+def show_gate_ui():
+    window = webview.create_window(
+        'Flowmaster Activation',
+        'gate_ui/index.html',  # or URL to local server
+        width=500,
+        height=400,
+        resizable=False
+    )
+    webview.start()
+```
+
+### Alternative Approaches (if pywebview doesn't fit)
+
+- **Local HTTP server + browser:** Spawn Flask/FastAPI server, open system browser, wait for callback
+- **Tauri:** If Rust is primary, this is the modern choice
+- **Electron:** Heavy but reliable, if Node.js is already in stack
+
+### Web UI Files
+
+Create a small HTML/CSS/JS application:
+
+```
+gate_ui/
+├── index.html
+├── styles.css
+└── script.js
+```
+
+### Styling Requirements
+
+- Dark theme to match Flowmaster brand
+- Use brand colors (red #f4383c, yellow #f5d440, green #6be553)
+- Clean, minimal design
+- Flowmaster logo at top
+- Professional, not cheap-looking
+- Mobile-responsive (in case window is resized)
+
+### Communication with Python Backend
+
+pywebview allows JS → Python communication:
+
+```python
+class Api:
+    def submit_email(self, email):
+        # Store email, return success
+        save_email_to_session_data(email)
+        return {'success': True}
+    
+    def submit_key(self, key):
+        # Validate key (stubbed: always accept)
+        activate_with_key(key)
+        return {'success': True, 'activated': True}
+    
+    def close_and_continue(self):
+        # Close window, let app continue
+        window.destroy()
+
+window = webview.create_window('Activation', 'index.html', js_api=Api())
+```
+
+```javascript
+// In script.js
+async function submitEmail() {
+    const email = document.getElementById('email').value;
+    const result = await pywebview.api.submit_email(email);
+    if (result.success) {
+        showScreen2();
+    }
+}
+```
+
+## Acceptance Criteria
+
+- [ ] Web-based window appears when gate condition is met
+- [ ] Window is blocking (app doesn't proceed until completed)
+- [ ] Screen 1: Email input with submit button
+- [ ] Screen 2: Access key input with submit button
+- [ ] Screen 3: Success confirmation with continue button
+- [ ] Submitting email stores it in session data
+- [ ] Submitting any key activates the software (stubbed)
+- [ ] After activation, window closes and app proceeds
+- [ ] Styling matches Flowmaster brand aesthetic
+- [ ] Window cannot be bypassed (no close button or handle it gracefully)
+- [ ] Works on Windows 10/11
+
+## Validation (Stubbed)
+
+For now:
+- Any non-empty email is "valid"
+- Any non-empty key is "valid"
+- "Sending" the key is instant (no actual email sent)
+
+This will be replaced with real backend calls in future.
+
+## Testing
+
+1. Reach session 4 → gate UI should appear
+2. Try to close window → should not be possible or should re-appear
+3. Enter email, submit → should advance to key screen
+4. Enter key, submit → should show success screen
+5. Click continue → window closes, app launches normally
+6. Relaunch app → should NOT show gate (is_activated = true)
+
+## Dependencies
+
+```
+pip install pywebview
+```
+
+May need additional dependencies on Windows for webview to work (check pywebview docs).
+
+## Files to Create
+
+- `gate_ui/index.html`
+- `gate_ui/styles.css`
+- `gate_ui/script.js`
+- Python module for showing gate and handling JS API calls
+
+## Notes
+
+The logo can be embedded as base64 or referenced from the LogoAssets folder. Keep the UI self-contained if possible for easier distribution.

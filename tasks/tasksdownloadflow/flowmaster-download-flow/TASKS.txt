@@ -1,0 +1,104 @@
+# Flowmaster Download Flow - Task Overview
+
+## Project Summary
+
+Revise the download and email acquisition flow to capture higher-quality leads by moving email collection from pre-download (website) to post-trial (application).
+
+## Repositories Involved
+
+1. **flowmaster-site** - Astro website (attribution dropdown)
+2. **flowmaster-suite** - Application (session gate, email capture, key validation)
+
+## Task Execution Order
+
+### Website Tasks (flowmaster-site)
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  website-01-audit-current-modal.txt                             │
+│  └─► Understand existing download flow and email modal          │
+├─────────────────────────────────────────────────────────────────┤
+│  website-02-implement-attribution-dropdown.txt                  │
+│  └─► Replace email with "How did you hear about us?" dropdown   │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Suite Tasks (flowmaster-suite)
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  suite-01-audit-current-architecture.txt                        │
+│  └─► Understand codebase, find integration points               │
+├─────────────────────────────────────────────────────────────────┤
+│  suite-02-implement-session-counting.txt                        │
+│  └─► Track launches, persist count, trigger gate at session 4   │
+├─────────────────────────────────────────────────────────────────┤
+│  suite-03-build-gate-ui-window.txt                              │
+│  └─► Web-based UI for email + key entry (pywebview)             │
+├─────────────────────────────────────────────────────────────────┤
+│  suite-04-stub-validation-telemetry.txt                         │
+│  └─► Placeholder validation + local telemetry logging           │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+## Quick Reference
+
+### Attribution Dropdown Options
+1. YouTube
+2. LinkedIn
+3. Google
+4. From somebody I follow
+5. From a friend or colleague
+6. Other
+
+### Session Data Structure
+```json
+{
+  "session_count": 3,
+  "first_launch": "2025-01-22T10:30:00Z",
+  "last_launch": "2025-01-22T14:45:00Z",
+  "access_key": null,
+  "email": null,
+  "is_activated": false
+}
+```
+
+### Gate UI Flow
+1. Email input → "Send Access Key"
+2. Key input → "Activate Flowmaster"
+3. Success → "Start Using Flowmaster"
+
+### Telemetry Events
+- app_launched
+- trial_session
+- gate_shown
+- email_submitted
+- key_validated
+- app_activated
+- feature_used
+
+## Technical Decisions
+
+| Decision | Choice |
+|----------|--------|
+| Gate UI approach | Web-based window (pywebview) |
+| Session storage | JSON file in %APPDATA%/Flowmaster/ |
+| Telemetry storage | Local JSONL file (stubbed) |
+| Validation mode | Stub (accept any input) |
+
+## What's Stubbed (Future Backend Work)
+
+- Email delivery (no actual email sent)
+- Key generation (no real keys)
+- Key validation (accepts any key)
+- Telemetry upload (logs locally only)
+
+## Success Criteria
+
+1. Website download works without email requirement
+2. Attribution data captured before download
+3. App works freely for 3 sessions
+4. Session 4+ shows blocking gate UI
+5. Gate accepts email and key input
+6. After activation, app proceeds normally
+7. All events logged locally for analysis
