@@ -1,29 +1,5 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-
-const team = [
-  {
-    name: 'Alexander Blair',
-    role: 'CEO / Creative Lead',
-    bio: 'Founder & creator. Handles branding, marketing, and front-end design.',
-    education: 'UCLA, UCSD',
-    initials: 'AB',
-  },
-  {
-    name: 'MacKenzie Drury',
-    role: 'CTO / Full-Stack Developer',
-    bio: 'Lead software developer and back-end architect.',
-    education: 'UCLA, Georgia Tech',
-    initials: 'MD',
-  },
-  {
-    name: 'Austin Lim',
-    role: 'Legal Strategy Advisor',
-    bio: 'Legal consultant responsible for compliance and procedure.',
-    education: 'UCSC',
-    initials: 'AL',
-  },
-];
 ---
 
 <BaseLayout title="About">
@@ -46,40 +22,19 @@ const team = [
           <p>
             Flowmaster started because editing sucked. After recording hours of gameplay,
             the real work was just beginning - scrubbing through footage, trying to remember
-            where the good parts were, making cut after cut after cut.
+            where the good parts were, making cut after cut after cut just to get down to
+            something usable.
           </p>
           <p>
-            We built Flowmaster to solve our own problem. Mark the moments while you're in
-            the zone, let the software handle the tedious cuts later. What used to take
-            hours now takes minutes.
+            We built Flowmaster to solve our own problem. Mark the moments to keep while
+            you keep recording, let the software handle the tedious cuts later. What used
+            to take hours now takes minutes.
           </p>
           <p>
             We're a small team passionate about helping creators spend less time editing
             and more time creating.
           </p>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Team -->
-  <section class="section-padding bg-bg-secondary">
-    <div class="container-main">
-      <h2 class="text-center mb-12">Meet the Team</h2>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-        {team.map(member => (
-          <div class="card text-center">
-            <!-- Avatar placeholder -->
-            <div class="w-24 h-24 rounded-full bg-brand-red/20 flex items-center justify-center text-2xl font-bold text-brand-red mx-auto mb-4">
-              {member.initials}
-            </div>
-            <h3 class="text-xl font-semibold">{member.name}</h3>
-            <p class="text-brand-red text-sm mb-3">{member.role}</p>
-            <p class="text-text-secondary text-sm mb-2">{member.bio}</p>
-            <p class="text-gray-600 text-xs">{member.education}</p>
-          </div>
-        ))}
       </div>
     </div>
   </section>
