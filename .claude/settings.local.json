@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh repo view:*)",
+      "Bash(git fetch:*)",
+      "Bash(curl:*)",
+      "Bash(sudo echo:*)",
+      "Bash(sudo mkdir:*)",
+      "Bash(wget:*)",
+      "Bash(sudo tee:*)",
+      "Bash(sudo chmod:*)",
+      "Bash(sudo apt:*)",
+      "Bash(sudo apt install:*)",
+      "Bash(gh:*)",
+      "Bash(1 <<'EOF'\n{\"build_type\":\"workflow\",\"source\":{\"branch\":\"main\",\"path\":\"/\"}}\nEOF)",
+      "Bash(1 <<'EOF'\n{\"cname\":\"flowmaster.live\",\"build_type\":\"workflow\",\"source\":{\"branch\":\"main\",\"path\":\"/\"}}\nEOF)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
+    ]
+  }
+}
