@@ -1,0 +1,244 @@
+---
+// Scout Conduct Guidelines Modal
+---
+
+<div id="conduct-modal" class="conduct-modal" style="display: none;">
+  <div class="conduct-backdrop" id="conduct-backdrop"></div>
+  <div class="conduct-content">
+    <button class="conduct-close" id="conduct-close" aria-label="Close guidelines">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M18 6L6 18M6 6l12 12"/>
+      </svg>
+    </button>
+
+    <h2 class="conduct-title">Scout Conduct Guidelines</h2>
+
+    <p class="conduct-intro">
+      As a Flowmaster Scout, you represent our brand to the world. We're excited
+      to have you on the team, and we trust you to uphold these standards.
+    </p>
+
+    <div class="conduct-section">
+      <h3 class="conduct-do">DO:</h3>
+      <ul class="conduct-list">
+        <li>Share Flowmaster authentically and honestly</li>
+        <li>Help people understand how Flowmaster can improve their workflow</li>
+        <li>Be responsive and helpful to people who have questions</li>
+        <li>Report any issues or bugs you discover</li>
+        <li>Provide feedback to help us improve</li>
+      </ul>
+    </div>
+
+    <div class="conduct-section">
+      <h3 class="conduct-dont">DON'T (while representing Flowmaster):</h3>
+      <ul class="conduct-list">
+        <li>Use offensive language or harassment of any kind</li>
+        <li>Engage in or reference drug use or gross sexual conduct</li>
+        <li>Create negative experiences for potential users</li>
+        <li>Make false claims about Flowmaster's capabilities</li>
+        <li>Spam or use aggressive sales tactics</li>
+        <li>Misrepresent your affiliation with Flowmaster</li>
+      </ul>
+    </div>
+
+    <div class="conduct-section">
+      <h3 class="conduct-subtitle">Transparency</h3>
+      <p>
+        We expect transparency in all interactions. If someone asks, be clear that
+        you're a Scout ambassador, not a Flowmaster employee.
+      </p>
+    </div>
+
+    <div class="conduct-section">
+      <h3 class="conduct-subtitle">Revocation</h3>
+      <p>
+        Flowmaster reserves the right to revoke Scout status at any time for conduct
+        violations. This includes deactivating your Scout key and all invite links
+        you've generated.
+      </p>
+    </div>
+
+    <p class="conduct-agreement">
+      By checking the box and continuing, you acknowledge these guidelines and
+      agree to represent Flowmaster responsibly.
+    </p>
+
+    <button class="conduct-close-btn" id="conduct-close-btn">Close</button>
+  </div>
+</div>
+
+<style>
+  .conduct-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+
+  .conduct-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(4px);
+  }
+
+  .conduct-content {
+    position: relative;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-bg-tertiary);
+    border-radius: 0.75rem;
+    max-width: 560px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 2rem;
+    animation: slideUp 0.3s ease-out;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .conduct-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: var(--color-gray-400);
+    cursor: pointer;
+    padding: 0.25rem;
+    transition: color 0.2s;
+  }
+
+  .conduct-close:hover {
+    color: #f2f2f2;
+  }
+
+  .conduct-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #f2f2f2;
+  }
+
+  .conduct-intro {
+    color: var(--color-gray-300);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+
+  .conduct-section {
+    margin-bottom: 1.25rem;
+  }
+
+  .conduct-do {
+    color: var(--color-step-autoclean);
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .conduct-dont {
+    color: var(--color-brand-red);
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .conduct-subtitle {
+    color: #f2f2f2;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .conduct-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .conduct-list li {
+    position: relative;
+    padding-left: 1.25rem;
+    color: var(--color-gray-300);
+    line-height: 1.8;
+    font-size: 0.9rem;
+  }
+
+  .conduct-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.7em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-gray-500);
+  }
+
+  .conduct-section p {
+    color: var(--color-gray-300);
+    line-height: 1.6;
+    font-size: 0.9rem;
+  }
+
+  .conduct-agreement {
+    color: var(--color-gray-400);
+    font-size: 0.85rem;
+    font-style: italic;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+  }
+
+  .conduct-close-btn {
+    display: block;
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--color-bg-tertiary);
+    color: #f2f2f2;
+    border: 1px solid var(--color-gray-700);
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .conduct-close-btn:hover {
+    background: var(--color-gray-700);
+  }
+</style>
+
+<script is:inline>
+  function initConductModal() {
+    var modal = document.getElementById('conduct-modal');
+    var backdrop = document.getElementById('conduct-backdrop');
+    var closeBtn = document.getElementById('conduct-close');
+    var closeBtnBottom = document.getElementById('conduct-close-btn');
+
+    function close() {
+      if (modal) modal.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    if (backdrop) backdrop.addEventListener('click', close);
+    if (closeBtn) closeBtn.addEventListener('click', close);
+    if (closeBtnBottom) closeBtnBottom.addEventListener('click', close);
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && modal && modal.style.display !== 'none') {
+        close();
+      }
+    });
+
+    // Expose open function globally
+    window.openConductModal = function() {
+      if (modal) modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    };
+  }
+
+  initConductModal();
+</script>
