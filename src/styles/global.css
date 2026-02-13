@@ -31,6 +31,12 @@
   --color-gray-600: #525252;
   --color-gray-700: #484848;
 
+  /* Tier Selector */
+  --color-tier-glow: rgba(244, 63, 67, 0.4);
+  --color-tier-glow-intense: rgba(244, 63, 67, 0.6);
+  --color-tier-claimed: #d4a017;
+  --color-tier-claimed-check: #6be553;
+
   /* Fonts */
   --font-heading: "Space Grotesk", sans-serif;
   --font-body: "Inter", sans-serif;

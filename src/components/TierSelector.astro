@@ -1,0 +1,1046 @@
+---
+// TierSelector.astro - Arcade-style pricing tier carousel
+
+interface Tier {
+  id: number;
+  name: string;
+  displayName: string;
+  priceCents: number;
+  priceFormatted: string;
+  totalKeys: number;
+  claimedKeys: number;
+  availableKeys: number;
+  isCurrent: boolean;
+  isSoldOut: boolean;
+}
+
+interface Props {
+  tiers: Tier[];
+  currentTierId: number;
+}
+
+const { tiers, currentTierId } = Astro.props;
+---
+
+<section class="tier-selector-section section-padding relative overflow-hidden">
+  <!-- Atmospheric Background -->
+  <div class="absolute inset-0 tier-bg">
+    <div class="particles-container" id="particles"></div>
+    <div class="gradient-overlay"></div>
+  </div>
+
+  <div class="container-main relative z-10">
+    <!-- Section Header -->
+    <div class="text-center mb-12">
+      <h2 class="tier-heading mb-2">EARLY ACCESS KEYS</h2>
+      <p class="text-gray-400 max-w-2xl mx-auto text-lg">
+        The earlier you join, the less you pay. Price increases as more people
+        get Flowmaster. Lock in your lifetime license now.
+      </p>
+    </div>
+
+    <!-- Detail Panel (shows selected tier info) -->
+    <div class="detail-panel mb-12" id="detail-panel">
+      <div class="detail-content" id="detail-content">
+        <!-- Populated by JS based on selected tier -->
+      </div>
+    </div>
+
+    <!-- Tier Carousel -->
+    <div class="tier-carousel-wrapper">
+      <div class="tier-carousel" id="tier-carousel" role="listbox" aria-label="Pricing tiers">
+        {tiers.map((tier, index) => (
+          <div
+            class={`tier-card ${tier.isCurrent ? 'is-current' : ''} ${tier.isSoldOut ? 'is-sold-out' : ''}`}
+            data-tier-id={tier.id}
+            data-tier-index={index}
+            data-price={tier.priceCents}
+            data-name={tier.name}
+            data-display-name={tier.displayName}
+            data-total={tier.totalKeys}
+            data-claimed={tier.claimedKeys}
+            data-available={tier.availableKeys}
+            data-is-current={tier.isCurrent}
+            data-is-sold-out={tier.isSoldOut}
+            role="option"
+            tabindex="0"
+            aria-label={`${tier.displayName} tier, $${tier.priceCents / 100}`}
+          >
+            <!-- NOW SELLING Badge (current tier only, outside card-inner to avoid overflow clip) -->
+            {tier.isCurrent && !tier.isSoldOut && (
+              <div class="now-selling-badge">
+                <span class="now-selling-dot"></span> NOW SELLING
+              </div>
+            )}
+
+            <div class="card-inner">
+              <!-- Claimed Badge (celebratory sold-out) -->
+              {tier.isSoldOut && (
+                <div class="claimed-badge">
+                  <span class="claimed-check">✓</span> CLAIMED
+                </div>
+              )}
+
+              <!-- Price Display -->
+              <div class="tier-price">
+                <span class="currency">$</span>
+                <span class="amount">{tier.priceCents / 100}</span>
+              </div>
+
+              <!-- Tier Name -->
+              <div class="tier-name">{tier.displayName}</div>
+
+              <!-- Progress Bar -->
+              <div class="tier-progress">
+                <div
+                  class="progress-fill"
+                  style={`width: ${Math.min((tier.claimedKeys / tier.totalKeys) * 100, 100)}%`}
+                ></div>
+              </div>
+              <div class="tier-count">
+                {tier.claimedKeys} / {tier.totalKeys}
+              </div>
+
+              <!-- Shine Effect Overlay -->
+              <div class="shine-effect"></div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <!-- Navigation Arrows (hidden on mobile) -->
+      <button class="carousel-nav prev" id="nav-prev" aria-label="Previous tier">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+      </button>
+      <button class="carousel-nav next" id="nav-next" aria-label="Next tier">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- CTA Button -->
+    <div class="text-center mt-10">
+      <button
+        class="btn-primary cta-button"
+        id="cta-button"
+        data-current-tier={currentTierId}
+      >
+        Get This Key — <span id="cta-price">$12</span>
+      </button>
+      <p class="text-gray-500 text-sm mt-3" id="cta-subtext">
+        Lifetime license • All future updates included
+      </p>
+    </div>
+
+    <!-- Cancel Toast (hidden by default) -->
+    <div class="cancel-toast" id="cancel-toast" aria-live="polite">
+      No worries — come back when you're ready
+    </div>
+  </div>
+</section>
+
+<script>
+  const cards = document.querySelectorAll('.tier-card');
+  const carousel = document.getElementById('tier-carousel');
+  const detailContent = document.getElementById('detail-content');
+  const ctaButton = document.getElementById('cta-button');
+  const ctaPrice = document.getElementById('cta-price');
+  const ctaSubtext = document.getElementById('cta-subtext');
+  const navPrev = document.getElementById('nav-prev');
+  const navNext = document.getElementById('nav-next');
+  const cancelToast = document.getElementById('cancel-toast');
+
+  let selectedIndex = 0;
+  let currentTierIndex = 0;
+
+  // Find the current tier index on load
+  cards.forEach((card, index) => {
+    if (card.dataset.isCurrent === 'true') {
+      currentTierIndex = index;
+      selectedIndex = index;
+    }
+  });
+
+  // Client-side refresh: fetch live tier data and update the UI
+  async function refreshTierData() {
+    try {
+      const response = await fetch(
+        'https://jwwbwozjvfiheunavbnk.supabase.co/functions/v1/get-tier-status',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3d2J3b3pqdmZpaGV1bmF2Ym5rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4MDA1ODAsImV4cCI6MjA4MjM3NjU4MH0.hJau-XnPeTLJ2Q6f-VMNHF4YS92EBDR7FmSKVa3cX10',
+          },
+        }
+      );
+      const data = await response.json();
+      if (!data.tiers) return;
+
+      const newCurrentId = data.currentTier?.id ?? null;
+
+      data.tiers.forEach((tier) => {
+        const card = document.querySelector(`.tier-card[data-tier-id="${tier.id}"]`);
+        if (!card) return;
+
+        const isCurrent = tier.id === newCurrentId;
+        const isSoldOut = tier.availableKeys <= 0;
+
+        // Update data attributes
+        card.dataset.claimed = tier.claimedKeys;
+        card.dataset.available = tier.availableKeys;
+        card.dataset.isCurrent = String(isCurrent);
+        card.dataset.isSoldOut = String(isSoldOut);
+
+        // Update CSS classes
+        card.classList.toggle('is-current', isCurrent);
+        card.classList.toggle('is-sold-out', isSoldOut);
+
+        // Update progress bar
+        const progressFill = card.querySelector('.progress-fill');
+        if (progressFill) {
+          progressFill.style.width = `${Math.min((tier.claimedKeys / tier.totalKeys) * 100, 100)}%`;
+        }
+
+        // Update count text
+        const countEl = card.querySelector('.tier-count');
+        if (countEl) {
+          countEl.textContent = `${tier.claimedKeys} / ${tier.totalKeys}`;
+        }
+
+        // Update NOW SELLING badge
+        const existingBadge = card.querySelector('.now-selling-badge');
+        if (isCurrent && !isSoldOut) {
+          if (!existingBadge) {
+            const badge = document.createElement('div');
+            badge.className = 'now-selling-badge';
+            badge.innerHTML = '<span class="now-selling-dot"></span> NOW SELLING';
+            card.insertBefore(badge, card.firstChild);
+          }
+        } else if (existingBadge) {
+          existingBadge.remove();
+        }
+
+        // Update CLAIMED badge
+        const cardInner = card.querySelector('.card-inner');
+        const existingClaimed = cardInner?.querySelector('.claimed-badge');
+        if (isSoldOut) {
+          if (!existingClaimed && cardInner) {
+            const badge = document.createElement('div');
+            badge.className = 'claimed-badge';
+            badge.innerHTML = '<span class="claimed-check">✓</span> CLAIMED';
+            cardInner.insertBefore(badge, cardInner.firstChild);
+          }
+        } else if (existingClaimed) {
+          existingClaimed.remove();
+        }
+      });
+
+      // Update currentTierIndex
+      let newCurrentIndex = currentTierIndex;
+      cards.forEach((card, index) => {
+        if (card.dataset.isCurrent === 'true') {
+          newCurrentIndex = index;
+        }
+      });
+      currentTierIndex = newCurrentIndex;
+
+      // Re-render selected tier to update detail panel + CTA
+      selectTier(selectedIndex);
+    } catch (err) {
+      // Silent fail — SSG data still displayed
+      console.warn('Tier refresh failed:', err);
+    }
+  }
+
+  // Refresh on page load and every 30 seconds
+  refreshTierData();
+  setInterval(refreshTierData, 30000);
+
+  // Detail panel content templates
+  const tierDetails = {
+    pioneer: {
+      title: "Early Adopter License",
+      bullets: ["Lifetime access", "All future updates"]
+    },
+    early_adopter: {
+      title: "Supporter License",
+      bullets: ["Lifetime access", "All future updates"]
+    },
+    believer: {
+      title: "Semi-Early License",
+      bullets: ["Lifetime access", "All future updates"]
+    },
+    standard: {
+      title: "Pro License",
+      bullets: ["Lifetime access", "All future updates"]
+    }
+  };
+
+  function updateDetailPanel(tier) {
+    const details = tierDetails[tier.name] || tierDetails.standard;
+    const isSoldOut = tier.isSoldOut === 'true';
+    const isCurrent = tier.isCurrent === 'true';
+
+    detailContent.innerHTML = `
+      <div class="detail-header">
+        <div class="detail-price ${isSoldOut ? 'sold-out' : ''}">
+          <span class="price-currency">$</span>
+          <span class="price-value">${parseInt(tier.price) / 100}</span>
+          ${isSoldOut ? '<span class="claimed-detail-badge">✓ CLAIMED</span>' : ''}
+        </div>
+        <div class="detail-title-group">
+          <h3 class="detail-title">${details.title}</h3>
+          <ul class="detail-bullets">
+            ${details.bullets.map(b => `<li><span class="check">✓</span> ${b}</li>`).join('')}
+            <li><span class="check">✓</span> ${tier.available} of ${tier.total} remaining</li>
+          </ul>
+        </div>
+      </div>
+      ${!isSoldOut && isCurrent ? `
+        <div class="availability-badge">
+          <span class="pulse"></span>
+          ${tier.available} of ${tier.total} remaining
+        </div>
+      ` : ''}
+    `;
+
+    detailContent.classList.remove('slide-in');
+    void detailContent.offsetWidth;
+    detailContent.classList.add('slide-in');
+  }
+
+  function selectTier(index) {
+    index = Math.max(0, Math.min(index, cards.length - 1));
+
+    cards.forEach((card, i) => {
+      card.classList.toggle('is-selected', i === index);
+      card.setAttribute('aria-selected', i === index ? 'true' : 'false');
+    });
+
+    selectedIndex = index;
+    const card = cards[index];
+    const tier = card.dataset;
+
+    updateDetailPanel(tier);
+
+    const price = parseInt(tier.price) / 100;
+    const isCurrent = tier.isCurrent === 'true';
+    const isSoldOut = tier.isSoldOut === 'true';
+
+    if (isSoldOut) {
+      ctaButton.disabled = true;
+      ctaButton.textContent = '✓ All Claimed';
+      ctaSubtext.textContent = 'This tier has been fully claimed';
+    } else if (!isCurrent) {
+      ctaButton.disabled = true;
+      ctaButton.innerHTML = `Coming Soon — <span>$${price}</span>`;
+      ctaSubtext.textContent = 'Available after current tier sells out';
+    } else {
+      ctaButton.disabled = false;
+      ctaButton.innerHTML = `Get This Key — <span>$${price}</span>`;
+      ctaSubtext.textContent = 'Lifetime license • All future updates included';
+    }
+
+    const cardRect = card.getBoundingClientRect();
+    const carouselRect = carousel.getBoundingClientRect();
+    const scrollTarget = card.offsetLeft - (carouselRect.width / 2) + (cardRect.width / 2);
+    carousel.scrollTo({ left: scrollTarget, behavior: 'smooth' });
+  }
+
+  // Initialize
+  selectTier(currentTierIndex);
+
+  // Click handlers
+  cards.forEach((card, index) => {
+    card.addEventListener('click', () => selectTier(index));
+  });
+
+  navPrev.addEventListener('click', () => selectTier(selectedIndex - 1));
+  navNext.addEventListener('click', () => selectTier(selectedIndex + 1));
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') selectTier(selectedIndex - 1);
+    if (e.key === 'ArrowRight') selectTier(selectedIndex + 1);
+  });
+
+  // CTA click - initiate checkout
+  ctaButton.addEventListener('click', async () => {
+    const tierId = parseInt(cards[currentTierIndex].dataset.tierId);
+
+    ctaButton.disabled = true;
+    ctaButton.innerHTML = '<span class="loading-spinner"></span> Processing...';
+
+    try {
+      const response = await fetch(
+        'https://jwwbwozjvfiheunavbnk.supabase.co/functions/v1/create-checkout-session',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3d2J3b3pqdmZpaGV1bmF2Ym5rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4MDA1ODAsImV4cCI6MjA4MjM3NjU4MH0.hJau-XnPeTLJ2Q6f-VMNHF4YS92EBDR7FmSKVa3cX10',
+          },
+          body: JSON.stringify({ tierId })
+        }
+      );
+
+      const { url, error } = await response.json();
+
+      if (error) throw new Error(error);
+      if (url) window.location.href = url;
+
+    } catch (err) {
+      console.error('Checkout error:', err);
+      ctaButton.innerHTML = 'Error - Try Again';
+      ctaButton.disabled = false;
+      setTimeout(() => selectTier(currentTierIndex), 2000);
+    }
+  });
+
+  // Particle animation (40 particles, red + mint + white)
+  function initParticles() {
+    const container = document.getElementById('particles');
+    const colors = [
+      'rgba(244, 63, 67, 0.4)',
+      'rgba(244, 63, 67, 0.3)',
+      'rgba(85, 255, 162, 0.3)',
+      'rgba(85, 255, 162, 0.2)',
+      'rgba(255, 255, 255, 0.2)',
+      'rgba(255, 255, 255, 0.15)',
+    ];
+    for (let i = 0; i < 40; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const size = 2 + Math.random() * 4;
+      particle.style.cssText = `
+        left: ${Math.random() * 100}%;
+        top: ${Math.random() * 100}%;
+        width: ${size}px;
+        height: ${size}px;
+        background: ${color};
+        animation-delay: ${Math.random() * 5}s;
+        animation-duration: ${5 + Math.random() * 10}s;
+      `;
+      container.appendChild(particle);
+    }
+  }
+  initParticles();
+
+  // Pause animations when tab is hidden (performance)
+  document.addEventListener('visibilitychange', () => {
+    const section = document.querySelector('.tier-selector-section');
+    if (document.hidden) {
+      section.classList.add('paused');
+    } else {
+      section.classList.remove('paused');
+    }
+  });
+
+  // Handle cancel redirect toast
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('canceled') === 'true') {
+    cancelToast.classList.add('show');
+    setTimeout(() => cancelToast.classList.remove('show'), 4000);
+    // Clean URL
+    window.history.replaceState({}, '', '/pricing');
+  }
+</script>
+
+<style>
+  /* ===== SECTION BACKGROUND ===== */
+  .tier-selector-section {
+    background: linear-gradient(180deg, var(--color-bg-primary) 0%, #0a0a0a 100%);
+    min-height: 80vh;
+  }
+
+  .tier-selector-section.paused *,
+  .tier-selector-section.paused *::before,
+  .tier-selector-section.paused *::after {
+    animation-play-state: paused !important;
+  }
+
+  .tier-bg {
+    pointer-events: none;
+  }
+
+  .gradient-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(244, 63, 67, 0.1) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 100%, rgba(85, 255, 162, 0.05) 0%, transparent 40%);
+  }
+
+  /* Section heading */
+  .tier-heading {
+    font-family: var(--font-heading);
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(to right, var(--color-brand-red), var(--color-brand-red-bright));
+  }
+
+  @media (min-width: 768px) {
+    .tier-heading {
+      font-size: 3rem;
+    }
+  }
+
+  /* ===== PARTICLES ===== */
+  .particles-container {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    animation: float-particle linear infinite;
+  }
+
+  @keyframes float-particle {
+    0%, 100% {
+      transform: translateY(0) translateX(0);
+      opacity: 0;
+    }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% {
+      transform: translateY(-100vh) translateX(50px);
+      opacity: 0;
+    }
+  }
+
+  /* ===== DETAIL PANEL ===== */
+  .detail-panel {
+    background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
+    border: 1px solid var(--color-gray-700);
+    border-radius: 1rem;
+    padding: 2rem;
+    max-width: 600px;
+    margin: 0 auto;
+    min-height: 140px;
+  }
+
+  .detail-content {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .detail-content.slide-in {
+    animation: slide-in 0.3s ease-out;
+  }
+
+  @keyframes slide-in {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .detail-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .detail-price {
+    font-family: var(--font-heading);
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--color-brand-red);
+    line-height: 1;
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .detail-price.sold-out {
+    color: var(--color-tier-claimed);
+  }
+
+  .price-currency {
+    font-size: 1.5rem;
+    margin-top: 0.25rem;
+  }
+
+  .claimed-detail-badge {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-12deg);
+    background: var(--color-tier-claimed);
+    color: #101010;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.25rem;
+    white-space: nowrap;
+  }
+
+  .detail-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .detail-bullets {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0 0;
+  }
+
+  .detail-bullets li {
+    color: var(--color-gray-300);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.15rem 0;
+  }
+
+  .detail-bullets .check {
+    color: var(--color-alenzie-mint);
+    font-weight: bold;
+  }
+
+  .availability-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(244, 63, 67, 0.1);
+    border: 1px solid rgba(244, 63, 67, 0.3);
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    margin-top: 1.25rem;
+    font-size: 0.875rem;
+    color: var(--color-brand-red-bright);
+  }
+
+  .pulse {
+    width: 8px;
+    height: 8px;
+    background: var(--color-brand-red);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.5); opacity: 0.5; }
+  }
+
+  /* ===== CAROUSEL ===== */
+  .tier-carousel-wrapper {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 3rem;
+  }
+
+  .tier-carousel {
+    display: flex;
+    gap: 1.5rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    padding: 3rem 0 2.5rem;
+    justify-content: center;
+  }
+
+  .tier-carousel::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* ===== TIER CARDS ===== */
+  .tier-card {
+    flex-shrink: 0;
+    width: 140px;
+    height: 180px;
+    scroll-snap-align: center;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: scale(0.9);
+    opacity: 0.5;
+    filter: grayscale(0.8);
+    position: relative;
+  }
+
+  .tier-card:hover {
+    opacity: 0.7;
+  }
+
+  .tier-card:focus-visible {
+    outline: 2px solid var(--color-brand-red-bright);
+    outline-offset: 4px;
+    border-radius: 1rem;
+  }
+
+  .tier-card.is-selected {
+    transform: scale(1.1);
+    opacity: 1;
+    filter: grayscale(0);
+  }
+
+  .tier-card.is-current.is-selected {
+    animation: float 2.5s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: scale(1.15) translateY(0); }
+    50% { transform: scale(1.15) translateY(-8px); }
+  }
+
+  /* Sold-out: celebratory gold/green style */
+  .tier-card.is-sold-out {
+    opacity: 0.55;
+  }
+
+  .tier-card.is-sold-out .card-inner {
+    border-color: rgba(212, 160, 23, 0.3);
+  }
+
+  .tier-card.is-sold-out.is-selected {
+    opacity: 0.75;
+    filter: grayscale(0);
+  }
+
+  .tier-card.is-sold-out.is-selected .card-inner {
+    border-color: var(--color-tier-claimed);
+    box-shadow: 0 0 20px rgba(212, 160, 23, 0.2);
+  }
+
+  .tier-card.is-sold-out .tier-price {
+    color: var(--color-tier-claimed);
+  }
+
+  .tier-card.is-sold-out .progress-fill {
+    background: var(--color-tier-claimed);
+  }
+
+  .card-inner {
+    background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
+    border: 2px solid var(--color-gray-700);
+    border-radius: 1rem;
+    padding: 1rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .tier-card.is-selected .card-inner {
+    border-color: var(--color-brand-red);
+    box-shadow:
+      0 0 30px rgba(244, 63, 67, 0.3),
+      inset 0 0 20px rgba(244, 63, 67, 0.05);
+  }
+
+  .tier-card.is-current.is-selected .card-inner {
+    box-shadow:
+      0 0 40px rgba(244, 63, 67, 0.4),
+      0 0 80px rgba(244, 63, 67, 0.2),
+      inset 0 0 30px rgba(244, 63, 67, 0.1);
+  }
+
+  /* Claimed badge (celebratory) */
+  .claimed-badge {
+    position: absolute;
+    top: 0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-tier-claimed);
+    color: #101010;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    z-index: 2;
+  }
+
+  .claimed-check {
+    color: #101010;
+    font-weight: 900;
+  }
+
+  /* NOW SELLING badge */
+  .now-selling-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-brand-red);
+    color: white;
+    font-size: 0.55rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    z-index: 3;
+    white-space: nowrap;
+    letter-spacing: 0.05em;
+    box-shadow: 0 0 12px rgba(244, 63, 67, 0.6);
+    animation: badge-glow 2s ease-in-out infinite;
+  }
+
+  .now-selling-dot {
+    width: 6px;
+    height: 6px;
+    background: white;
+    border-radius: 50%;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes badge-glow {
+    0%, 100% { box-shadow: 0 0 12px rgba(244, 63, 67, 0.6); }
+    50% { box-shadow: 0 0 20px rgba(244, 63, 67, 0.9), 0 0 40px rgba(244, 63, 67, 0.3); }
+  }
+
+  /* Current tier enhanced visuals */
+  .tier-card.is-current {
+    opacity: 0.7;
+    filter: grayscale(0);
+  }
+
+  .tier-card.is-current .card-inner {
+    border-color: rgba(244, 63, 67, 0.4);
+  }
+
+  .tier-card.is-current.is-selected {
+    transform: scale(1.15);
+  }
+
+  .tier-card.is-current.is-selected .card-inner {
+    border-color: var(--color-brand-red-bright);
+    animation: border-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes border-pulse {
+    0%, 100% { border-color: var(--color-brand-red-bright); }
+    50% { border-color: var(--color-brand-red); }
+  }
+
+  /* Price */
+  .tier-price {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 700;
+    color: white;
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .tier-price .currency {
+    font-size: 1rem;
+    margin-top: 0.25rem;
+  }
+
+  /* Tier name */
+  .tier-name {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-gray-400);
+    margin-top: 0.5rem;
+  }
+
+  /* Progress bar */
+  .tier-progress {
+    width: 100%;
+    height: 4px;
+    background: var(--color-gray-700);
+    border-radius: 2px;
+    margin-top: 0.75rem;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--color-brand-red);
+    transition: width 0.5s ease-out;
+  }
+
+  .tier-count {
+    font-size: 0.65rem;
+    color: var(--color-gray-500);
+    margin-top: 0.25rem;
+  }
+
+  /* Shine effect */
+  .shine-effect {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    transform: skewX(-20deg);
+    pointer-events: none;
+  }
+
+  .tier-card.is-current.is-selected .shine-effect {
+    animation: shine 2.5s ease-in-out infinite;
+  }
+
+  @keyframes shine {
+    0%, 100% { left: -100%; }
+    50% { left: 150%; }
+  }
+
+  /* ===== NAVIGATION ===== */
+  .carousel-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--color-bg-tertiary);
+    border: 1px solid var(--color-gray-700);
+    color: var(--color-gray-300);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 10;
+  }
+
+  .carousel-nav:hover {
+    background: var(--color-gray-700);
+    color: white;
+  }
+
+  .carousel-nav.prev { left: 0; }
+  .carousel-nav.next { right: 0; }
+
+  /* ===== CTA BUTTON ===== */
+  .cta-button {
+    font-size: 1.125rem;
+    padding: 1rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-button:disabled {
+    background: var(--color-gray-700);
+    cursor: not-allowed;
+  }
+
+  .cta-button:disabled:hover {
+    box-shadow: none;
+  }
+
+  .loading-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* ===== CANCEL TOAST ===== */
+  .cancel-toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-gray-700);
+    color: var(--color-gray-300);
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    opacity: 0;
+    transition: all 0.4s ease-out;
+    z-index: 50;
+    pointer-events: none;
+  }
+
+  .cancel-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 640px) {
+    .tier-carousel-wrapper {
+      padding: 0 1rem;
+    }
+
+    .tier-card {
+      width: 120px;
+      height: 160px;
+    }
+
+    .detail-panel {
+      padding: 1.5rem;
+      min-height: auto;
+    }
+
+    .detail-price {
+      font-size: 2.5rem;
+    }
+
+    .detail-header {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .carousel-nav {
+      display: none;
+    }
+
+    .tier-heading {
+      font-size: 1.75rem;
+    }
+  }
+
+  /* ===== REDUCED MOTION ===== */
+  @media (prefers-reduced-motion: reduce) {
+    .tier-card.is-current.is-selected {
+      animation: none;
+    }
+
+    .tier-card.is-current.is-selected .shine-effect {
+      animation: none;
+    }
+
+    .particle {
+      animation: none;
+      opacity: 0.3;
+    }
+
+    .pulse {
+      animation: none;
+    }
+  }
+</style>
